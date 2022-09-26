@@ -1,4 +1,4 @@
-# Clean StaffChat
+# Clean Ping
 
 ```
 Clean Ping is a basic /ping plugin, compatible with BungeeCord, Spigot and Velocity.
