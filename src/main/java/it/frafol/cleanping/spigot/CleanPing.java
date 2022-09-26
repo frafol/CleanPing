@@ -24,7 +24,7 @@ public class CleanPing extends JavaPlugin {
 
 		instance = this;
 
-		getLogger().info("\n§d   ___ _                 ___ _           \n" +
+		getLogger().info("\n   ___ _                 ___ _           \n" +
 				"  / __| |___ __ _ _ _   | _ (_)_ _  __ _ \n" +
 				" | (__| / -_) _` | ' \\  |  _/ | ' \\/ _` |\n" +
 				"  \\___|_\\___\\__,_|_||_| |_| |_|_||_\\__, |\n" +
