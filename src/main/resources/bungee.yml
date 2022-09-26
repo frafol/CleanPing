@@ -1,0 +1,4 @@
+name: CleanPing
+version: ${project.version}
+main: it.frafol.cleanping.bungee.CleanPing
+author: frafol

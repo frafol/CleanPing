@@ -1,0 +1,14 @@
+name: CleanPing
+version: '${project.version}'
+main: it.frafol.cleanping.spigot.CleanPing
+authors: [ frafol ]
+description: Powerful /ping plugin.
+softdepend:
+  - LuckPerms
+commands:
+  cleanping:
+    description: Show your ping
+    aliases: [ ping ]
+  pingreload:
+    description: Reload the plugin
+    aliases: [ cleanpingreload ]
