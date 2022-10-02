@@ -32,3 +32,4 @@ Clean Ping is a basic /ping plugin, compatible with BungeeCord, Spigot and Veloc
 ```
 Permissions are configurable in the config.yml
 ```
+ 
