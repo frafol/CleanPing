@@ -56,8 +56,8 @@
 
     <repositories>
         <repository>
-            <id>velocity</id>
-            <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
