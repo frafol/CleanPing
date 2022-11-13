@@ -1,0 +1,15 @@
+messages:
+
+  prefix: "&d&lPING &7»"
+
+  usage: "%prefix% &7Use: &d/ping [player]"
+
+  only_players: "%prefix% &7This command is only for &dplayers&7."
+
+  no_permission: "%prefix% &7You do not have the &dpermission &7to do this."
+  not_online: "%prefix% &7The user &d%user% &7is not &donline&7."
+
+  ping: "%prefix% &7Your latency is: &d%ping% ms"
+  others_ping: "%prefix% &d%user%&7's latency: %ping% ms"
+
+  reloaded: "%prefix% &7Configuration reloaded &dsuccessfully&7."

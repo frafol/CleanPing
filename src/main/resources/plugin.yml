@@ -1,10 +1,8 @@
 name: CleanPing
 version: '${project.version}'
-main: it.frafol.cleanping.spigot.CleanPing
+main: it.frafol.cleanping.bukkit.CleanPing
 authors: [ frafol ]
-description: Powerful /ping plugin.
-softdepend:
-  - LuckPerms
+description: "Adds /ping command to check your and player's ping."
 commands:
   cleanping:
     description: Show your ping

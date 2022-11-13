@@ -5,6 +5,7 @@ import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import it.frafol.cleanping.velocity.enums.VelocityConfig;
+import it.frafol.cleanping.velocity.enums.VelocityMessages;
 import net.kyori.adventure.text.Component;
 
 import java.util.Optional;
@@ -25,8 +26,8 @@ public class PingCommand implements SimpleCommand {
 		if(invocation.arguments().length == 0) {
 
 			if(!(source instanceof Player)) {
-				source.sendMessage(Component.text(VelocityConfig.ONLY_PLAYERS.color()
-						.replace("%prefix%", VelocityConfig.PREFIX.color())));
+				source.sendMessage(Component.text(VelocityMessages.ONLY_PLAYERS.color()
+						.replace("%prefix%", VelocityMessages.PREFIX.color())));
 				return;
 			}
 
@@ -36,32 +37,32 @@ public class PingCommand implements SimpleCommand {
 			if (source.hasPermission(VelocityConfig.PING_PERMISSION.get(String.class))) {
 
 				if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
-					source.sendMessage(Component.text(VelocityConfig.PING.color()
-							.replace("%prefix%", VelocityConfig.PREFIX.color())
+					source.sendMessage(Component.text(VelocityMessages.PING.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%ping%", VelocityConfig.LOW_MS_COLOR.color() + player.getPing())));
 
 				} else if (ping > VelocityConfig.MEDIUM_MS.get(Integer.class)
 						&& ping < VelocityConfig.HIGH_MS.get(Integer.class)) {
-					source.sendMessage(Component.text(VelocityConfig.PING.color()
-							.replace("%prefix%", VelocityConfig.PREFIX.color())
+					source.sendMessage(Component.text(VelocityMessages.PING.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%ping%", VelocityConfig.MEDIUM_MS_COLOR.color() + player.getPing())));
 
 				} else {
-					source.sendMessage(Component.text(VelocityConfig.PING.color()
-							.replace("%prefix%", VelocityConfig.PREFIX.color())
+					source.sendMessage(Component.text(VelocityMessages.PING.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%ping%", VelocityConfig.HIGH_MS_COLOR.color() + player.getPing())));
 				}
 
 			} else {
-				source.sendMessage(Component.text(VelocityConfig.NO_PERMISSION.color()
-						.replace("%prefix%", VelocityConfig.PREFIX.color())));
+				source.sendMessage(Component.text(VelocityMessages.NO_PERMISSION.color()
+						.replace("%prefix%", VelocityMessages.PREFIX.color())));
 			}
 
 		} else if (invocation.arguments().length == 1) {
 
 			if (!source.hasPermission(VelocityConfig.PING_OTHERS_PERMISSION.get(String.class))) {
-				source.sendMessage(Component.text(VelocityConfig.NO_PERMISSION.color()
-						.replace("%prefix%", VelocityConfig.PREFIX.color())));
+				source.sendMessage(Component.text(VelocityMessages.NO_PERMISSION.color()
+						.replace("%prefix%", VelocityMessages.PREFIX.color())));
 				return;
 			}
 
@@ -69,50 +70,50 @@ public class PingCommand implements SimpleCommand {
 
 
 			if(!target.isPresent()) {
-				source.sendMessage(Component.text(VelocityConfig.NOT_ONLINE.color()
-						.replace("%prefix%", VelocityConfig.PREFIX.color())
+				source.sendMessage(Component.text(VelocityMessages.NOT_ONLINE.color()
+						.replace("%prefix%", VelocityMessages.PREFIX.color())
 						.replace("%user%", (invocation.arguments()[0]))));
 				return;
 			}
 
 			if (!(VelocityConfig.OTHERS_PING_OPTION.get(Boolean.class))) {
-				source.sendMessage(Component.text(VelocityConfig.USAGE.color()
-						.replace("%prefix%", VelocityConfig.PREFIX.color())));
+				source.sendMessage(Component.text(VelocityMessages.USAGE.color()
+						.replace("%prefix%", VelocityMessages.PREFIX.color())));
 				return;
 			}
 
 			final long ping = target.get().getPing();
 
 			if (!(VelocityConfig.DYNAMIC_PING.get(Boolean.class))) {
-				source.sendMessage(Component.text(VelocityConfig.OTHERS_PING.color()
-						.replace("%prefix%", VelocityConfig.PREFIX.color())
+				source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+						.replace("%prefix%", VelocityMessages.PREFIX.color())
 						.replace("%user%", (invocation.arguments()[0]))
 						.replace("%ping%", "" + target.get().getPing())));
 			}
 
 			if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
-				source.sendMessage(Component.text(VelocityConfig.OTHERS_PING.color()
-						.replace("%prefix%", VelocityConfig.PREFIX.color())
+				source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+						.replace("%prefix%", VelocityMessages.PREFIX.color())
 						.replace("%user%", (invocation.arguments()[0]))
 						.replace("%ping%", VelocityConfig.LOW_MS_COLOR.color() + target.get().getPing())));
 
 			} else if (ping > VelocityConfig.MEDIUM_MS.get(Integer.class)
 					&& ping < VelocityConfig.HIGH_MS.get(Integer.class)) {
-				source.sendMessage(Component.text(VelocityConfig.OTHERS_PING.color()
-						.replace("%prefix%", VelocityConfig.PREFIX.color())
+				source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+						.replace("%prefix%", VelocityMessages.PREFIX.color())
 						.replace("%user%", (invocation.arguments()[0]))
 						.replace("%ping%", VelocityConfig.MEDIUM_MS_COLOR.color() + target.get().getPing())));
 
 			} else {
-				source.sendMessage(Component.text(VelocityConfig.OTHERS_PING.color()
-						.replace("%prefix%", VelocityConfig.PREFIX.color())
+				source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+						.replace("%prefix%", VelocityMessages.PREFIX.color())
 						.replace("%user%", (invocation.arguments()[0]))
 						.replace("%ping%", VelocityConfig.HIGH_MS_COLOR.color() + target.get().getPing())));
 			}
 
 		} else {
-			source.sendMessage(Component.text(VelocityConfig.USAGE.color()
-					.replace("%prefix%", VelocityConfig.PREFIX.color())));
+			source.sendMessage(Component.text(VelocityMessages.USAGE.color()
+					.replace("%prefix%", VelocityMessages.PREFIX.color())));
 
 		}
 

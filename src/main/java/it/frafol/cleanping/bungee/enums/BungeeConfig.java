@@ -4,18 +4,10 @@ import it.frafol.cleanping.bungee.CleanPing;
 
 public enum BungeeConfig {
 
-    PREFIX("messages.prefix"),
-
-    USAGE("messages.usage"),
-
     PING_PERMISSION("permissions.ping"),
     PING_OTHERS_PERMISSION("permissions.others_ping"),
     RELOAD_PERMISSION("permissions.reload"),
-
-    ONLY_PLAYERS("messages.only_players"),
-    NOT_ONLINE("messages.not_online"),
-
-    NO_PERMISSION("messages.no_permission"),
+    UPDATE_CHECK("settings.update_check"),
 
     LOW_MS_COLOR("dynamic.low_ms_color"),
     MEDIUM_MS_COLOR("dynamic.medium_ms_color"),
@@ -24,13 +16,9 @@ public enum BungeeConfig {
     MEDIUM_MS("dynamic.medium_ms"),
     HIGH_MS("dynamic.high_ms"),
 
-    PING("messages.ping"),
     OTHERS_PING_OPTION("settings.others_ping_enabled"),
-    OTHERS_PING("messages.others_ping"),
 
     STATS("settings.stats"),
-
-    RELOADED("messages.reloaded"),
 
     DYNAMIC_PING("settings.dynamic_ping");
 

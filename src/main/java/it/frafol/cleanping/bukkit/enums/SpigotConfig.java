@@ -1,8 +1,8 @@
-package it.frafol.cleanping.velocity.enums;
+package it.frafol.cleanping.bukkit.enums;
 
-import it.frafol.cleanping.velocity.CleanPing;
+import it.frafol.cleanping.bukkit.CleanPing;
 
-public enum VelocityConfig {
+public enum SpigotConfig {
 
     PING_PERMISSION("permissions.ping"),
     PING_OTHERS_PERMISSION("permissions.others_ping"),
@@ -25,12 +25,12 @@ public enum VelocityConfig {
     private final String path;
     public static final CleanPing instance = CleanPing.getInstance();
 
-    VelocityConfig(String path) {
+    SpigotConfig(String path) {
         this.path = path;
     }
 
     public <T> T get(Class<T> clazz) {
-        return clazz.cast(instance.getConfigTextFile().getConfig().get(path));
+        return clazz.cast(instance.getConfigTextFile().get(path));
     }
 
     public String color() {
