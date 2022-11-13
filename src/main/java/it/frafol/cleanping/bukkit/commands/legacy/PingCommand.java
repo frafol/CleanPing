@@ -8,8 +8,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class PingCommand implements CommandExecutor {
 
 	public final CleanPing plugin;
@@ -81,7 +79,7 @@ public class PingCommand implements CommandExecutor {
 				return false;
 			}
 
-			final long ping = Objects.requireNonNull(plugin.getServer().getPlayer(args[0])).getPing();
+			final long ping = CleanPing.getPing(plugin.getServer().getPlayer(args[0]));
 
 			if (!(SpigotConfig.DYNAMIC_PING.get(Boolean.class))) {
 				source.sendMessage(SpigotMessages.OTHERS_PING.color()
