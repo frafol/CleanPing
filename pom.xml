@@ -108,7 +108,7 @@
         <dependency>
             <groupId>me.carleslc.Simple-YAML</groupId>
             <artifactId>Simple-Yaml</artifactId>
-            <version>1.7.2</version>
+            <version>1.8.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.2-R0.1-SNAPSHOT</version>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
