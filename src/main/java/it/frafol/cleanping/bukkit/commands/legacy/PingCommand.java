@@ -35,6 +35,13 @@ public class PingCommand implements CommandExecutor {
 
 			if (source.hasPermission(SpigotConfig.PING_PERMISSION.get(String.class))) {
 
+				if (!(SpigotConfig.DYNAMIC_PING.get(Boolean.class))) {
+					source.sendMessage(SpigotMessages.PING.color()
+							.replace("%prefix%", SpigotMessages.PREFIX.color())
+							.replace("%ping%", String.valueOf(ping)));
+					return false;
+				}
+
 				if (ping < SpigotConfig.MEDIUM_MS.get(Integer.class)) {
 					source.sendMessage(SpigotMessages.PING.color()
 							.replace("%prefix%", SpigotMessages.PREFIX.color())
@@ -86,6 +93,7 @@ public class PingCommand implements CommandExecutor {
 						.replace("%prefix%", SpigotMessages.PREFIX.color())
 						.replace("%user%", (args[0]))
 						.replace("%ping%", "" + CleanPing.getPing(plugin.getServer().getPlayer(args[0]))));
+				return false;
 			}
 
 			if (ping < SpigotConfig.MEDIUM_MS.get(Integer.class)) {

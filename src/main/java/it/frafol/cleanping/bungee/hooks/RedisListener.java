@@ -71,6 +71,17 @@ public class RedisListener implements Listener {
                 return;
             }
 
+            if (!(BungeeConfig.DYNAMIC_PING.get(Boolean.class))) {
+
+                PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
+                        .replace("%prefix%", BungeeMessages.PREFIX.color())
+                        .replace("%user%", player_name)
+                        .replace("%ping%", String.valueOf(ping))));
+
+                return;
+
+            }
+
             if (ping < BungeeConfig.MEDIUM_MS.get(Integer.class)) {
 
                 PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()

@@ -38,6 +38,16 @@ public class PingCommand extends Command {
 
 			if (source.hasPermission(BungeeConfig.PING_PERMISSION.get(String.class))) {
 
+				if (!(BungeeConfig.DYNAMIC_PING.get(Boolean.class))) {
+
+					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
+							.replace("%prefix%", BungeeMessages.PREFIX.color())
+							.replace("%ping%", String.valueOf(player.getPing()))));
+
+					return;
+
+				}
+
 				if (ping < BungeeConfig.MEDIUM_MS.get(Integer.class)) {
 					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
@@ -92,7 +102,9 @@ public class PingCommand extends Command {
 					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
 							.replace("%user%", (args[0]))
-							.replace("%ping%", "" + ProxyServer.getInstance().getPlayer(args[0]).getPing())));
+							.replace("%ping%", String.valueOf(ProxyServer.getInstance().getPlayer(args[0]).getPing()))));
+
+					return;
 
 				}
 
@@ -152,6 +164,7 @@ public class PingCommand extends Command {
 			}
 
 		} else {
+
 			source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.USAGE.color()
 					.replace("%prefix%", BungeeMessages.PREFIX.color())));
 

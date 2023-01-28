@@ -8,7 +8,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import it.frafol.cleanping.velocity.enums.VelocityConfig;
 import it.frafol.cleanping.velocity.enums.VelocityMessages;
 import it.frafol.cleanping.velocity.enums.VelocityRedis;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +27,7 @@ public class PingCommand implements SimpleCommand {
 		final CommandSource source = invocation.source();
 
 		if(!(source instanceof Player)) {
-			source.sendMessage(Component.text(VelocityMessages.ONLY_PLAYERS.color()
+			source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.ONLY_PLAYERS.color()
 					.replace("%prefix%", VelocityMessages.PREFIX.color())));
 			return;
 		}
@@ -42,24 +42,24 @@ public class PingCommand implements SimpleCommand {
 
 				if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
 
-					source.sendMessage(Component.text(VelocityMessages.PING.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.PING.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%ping%", VelocityConfig.LOW_MS_COLOR.color() + player.getPing())));
 
 				} else if (ping > VelocityConfig.MEDIUM_MS.get(Integer.class)
 						&& ping < VelocityConfig.HIGH_MS.get(Integer.class)) {
-					source.sendMessage(Component.text(VelocityMessages.PING.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.PING.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%ping%", VelocityConfig.MEDIUM_MS_COLOR.color() + player.getPing())));
 
 				} else {
-					source.sendMessage(Component.text(VelocityMessages.PING.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.PING.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%ping%", VelocityConfig.HIGH_MS_COLOR.color() + player.getPing())));
 				}
 
 			} else {
-				source.sendMessage(Component.text(VelocityMessages.NO_PERMISSION.color()
+				source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.NO_PERMISSION.color()
 						.replace("%prefix%", VelocityMessages.PREFIX.color())));
 			}
 
@@ -69,7 +69,7 @@ public class PingCommand implements SimpleCommand {
 					|| proxyServer.getPlayer(invocation.arguments()[0]).isPresent()) {
 
 				if (!source.hasPermission(VelocityConfig.PING_OTHERS_PERMISSION.get(String.class))) {
-					source.sendMessage(Component.text(VelocityMessages.NO_PERMISSION.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.NO_PERMISSION.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())));
 					return;
 				}
@@ -78,7 +78,7 @@ public class PingCommand implements SimpleCommand {
 
 				if (!target.isPresent()) {
 
-					source.sendMessage(Component.text(VelocityMessages.NOT_ONLINE.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.NOT_ONLINE.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%user%", (invocation.arguments()[0]))));
 
@@ -88,7 +88,7 @@ public class PingCommand implements SimpleCommand {
 
 				if (!(VelocityConfig.OTHERS_PING_OPTION.get(Boolean.class))) {
 
-					source.sendMessage(Component.text(VelocityMessages.USAGE.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.USAGE.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())));
 
 					return;
@@ -98,16 +98,18 @@ public class PingCommand implements SimpleCommand {
 
 				if (!(VelocityConfig.DYNAMIC_PING.get(Boolean.class))) {
 
-					source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%user%", (invocation.arguments()[0]))
 							.replace("%ping%", "" + target.get().getPing())));
+
+					return;
 
 				}
 
 				if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
 
-					source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%user%", (invocation.arguments()[0]))
 							.replace("%ping%", VelocityConfig.LOW_MS_COLOR.color() + target.get().getPing())));
@@ -115,14 +117,14 @@ public class PingCommand implements SimpleCommand {
 				} else if (ping > VelocityConfig.MEDIUM_MS.get(Integer.class)
 						&& ping < VelocityConfig.HIGH_MS.get(Integer.class)) {
 
-					source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%user%", (invocation.arguments()[0]))
 							.replace("%ping%", VelocityConfig.MEDIUM_MS_COLOR.color() + target.get().getPing())));
 
 				} else {
 
-					source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%user%", (invocation.arguments()[0]))
 							.replace("%ping%", VelocityConfig.HIGH_MS_COLOR.color() + target.get().getPing())));
@@ -132,7 +134,7 @@ public class PingCommand implements SimpleCommand {
 			} else {
 
 				if (!source.hasPermission(VelocityConfig.PING_OTHERS_PERMISSION.get(String.class))) {
-					source.sendMessage(Component.text(VelocityMessages.NO_PERMISSION.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.NO_PERMISSION.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())));
 					return;
 				}
@@ -149,7 +151,7 @@ public class PingCommand implements SimpleCommand {
 
 				if (!redisBungeeAPI.isPlayerOnline(uuid)) {
 
-					source.sendMessage(Component.text(VelocityMessages.NOT_ONLINE.color()
+					source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.NOT_ONLINE.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%user%", (invocation.arguments()[0]))));
 
@@ -164,7 +166,7 @@ public class PingCommand implements SimpleCommand {
 
 		} else {
 
-			source.sendMessage(Component.text(VelocityMessages.USAGE.color()
+			source.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.USAGE.color()
 					.replace("%prefix%", VelocityMessages.PREFIX.color())));
 
 		}

@@ -8,7 +8,7 @@ import com.velocitypowered.api.proxy.Player;
 import it.frafol.cleanping.velocity.CleanPing;
 import it.frafol.cleanping.velocity.enums.VelocityConfig;
 import it.frafol.cleanping.velocity.enums.VelocityMessages;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -72,9 +72,20 @@ public class RedisListener {
                 return;
             }
 
+            if (!(VelocityConfig.DYNAMIC_PING.get(Boolean.class))) {
+
+                PLUGIN.getServer().getPlayer(source).get().sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
+                        .replace("%prefix%", VelocityMessages.PREFIX.color())
+                        .replace("%user%", player_name)
+                        .replace("%ping%", String.valueOf(ping))));
+
+                return;
+
+            }
+
             if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
 
-                PLUGIN.getServer().getPlayer(source).get().sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+                PLUGIN.getServer().getPlayer(source).get().sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
                         .replace("%prefix%", VelocityMessages.PREFIX.color())
                         .replace("%user%", player_name)
                         .replace("%ping%", VelocityConfig.LOW_MS_COLOR.color() + ping)));
@@ -82,14 +93,14 @@ public class RedisListener {
             } else if (ping > VelocityConfig.MEDIUM_MS.get(Integer.class)
                     && ping < VelocityConfig.HIGH_MS.get(Integer.class)) {
 
-                PLUGIN.getServer().getPlayer(source).get().sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+                PLUGIN.getServer().getPlayer(source).get().sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
                         .replace("%prefix%", VelocityMessages.PREFIX.color())
                         .replace("%user%", player_name)
                         .replace("%ping%", VelocityConfig.MEDIUM_MS_COLOR.color() + ping)));
 
             } else {
 
-                PLUGIN.getServer().getPlayer(source).get().sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+                PLUGIN.getServer().getPlayer(source).get().sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
                         .replace("%prefix%", VelocityMessages.PREFIX.color())
                         .replace("%user%", player_name)
                         .replace("%ping%", VelocityConfig.HIGH_MS_COLOR.color() + ping)));
