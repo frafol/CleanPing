@@ -2,6 +2,7 @@ package it.frafol.cleanping.bukkit;
 
 import it.frafol.cleanping.bukkit.commands.PingCommand;
 import it.frafol.cleanping.bukkit.commands.ReloadCommand;
+import it.frafol.cleanping.bukkit.commands.utils.TabComplete;
 import it.frafol.cleanping.bukkit.enums.SpigotConfig;
 import it.frafol.cleanping.bukkit.objects.TextFile;
 import lombok.SneakyThrows;
@@ -91,6 +92,8 @@ public class CleanPing extends JavaPlugin {
 
 		}
 
+		Objects.requireNonNull(getCommand("ping")).setTabCompleter(new TabComplete());
+		Objects.requireNonNull(getCommand("cleanping")).setTabCompleter(new TabComplete());
 
 		if (SpigotConfig.STATS.get(Boolean.class)) {
 

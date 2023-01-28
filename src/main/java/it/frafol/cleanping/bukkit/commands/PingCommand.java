@@ -93,8 +93,7 @@ public class PingCommand implements CommandExecutor {
 				source.sendMessage(SpigotMessages.OTHERS_PING.color()
 						.replace("%prefix%", SpigotMessages.PREFIX.color())
 						.replace("%user%", (args[0]))
-						.replace("%ping%", "" +
-								Objects.requireNonNull(plugin.getServer().getPlayer(args[0])).getPing()));
+						.replace("%ping%", String.valueOf(Objects.requireNonNull(plugin.getServer().getPlayer(args[0])).getPing())));
 				return false;
 			}
 
