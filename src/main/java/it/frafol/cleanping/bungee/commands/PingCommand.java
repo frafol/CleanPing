@@ -9,10 +9,14 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
-public class PingCommand extends Command {
+public class PingCommand extends Command implements TabExecutor {
 
 	public PingCommand() {
 
@@ -172,4 +176,19 @@ public class PingCommand extends Command {
 
 	}
 
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String @NotNull [] args) {
+
+		Set<String> list = new HashSet<>();
+
+		if (args.length == 1) {
+
+			for (ProxiedPlayer players :  ProxyServer.getInstance().getPlayers()) {
+				list.add(players.getName());
+			}
+
+		}
+
+		return list;
+	}
 }

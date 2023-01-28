@@ -9,9 +9,9 @@ import it.frafol.cleanping.velocity.enums.VelocityConfig;
 import it.frafol.cleanping.velocity.enums.VelocityMessages;
 import it.frafol.cleanping.velocity.enums.VelocityRedis;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class PingCommand implements SimpleCommand {
 
@@ -22,7 +22,7 @@ public class PingCommand implements SimpleCommand {
 	}
 
 	@Override
-	public void execute(SimpleCommand.Invocation invocation) {
+	public void execute(SimpleCommand.@NotNull Invocation invocation) {
 
 		final CommandSource source = invocation.source();
 
@@ -170,5 +170,20 @@ public class PingCommand implements SimpleCommand {
 					.replace("%prefix%", VelocityMessages.PREFIX.color())));
 
 		}
+	}
+
+	@Override
+	public List<String> suggest(@NotNull Invocation invocation) {
+
+		final List<String> list = new ArrayList<>();
+		final String[] args = invocation.arguments();
+
+		if (args.length == 1)  {
+			for (Player players : proxyServer.getAllPlayers()) {
+				list.add(players.getUsername());
+			}
+			return list;
+		}
+		return Collections.emptyList();
 	}
 }
