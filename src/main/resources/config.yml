@@ -3,6 +3,9 @@
 # | (__| / -_) _` | ' \  |  _/ | ' \/ _` |
 # \___|_\___\__,_|_||_|  |_| |_|_||_\__, |
 #                                   |___/
+#
+# Configuration file. Made with ❤ by frafol.
+# For support: discord.io/futuredevelopment
 
 settings:
   # Toggle Dynamic Ping, change color when ping is high/low.

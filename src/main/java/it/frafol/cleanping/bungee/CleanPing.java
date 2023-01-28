@@ -1,8 +1,11 @@
 package it.frafol.cleanping.bungee;
 
+import com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI;
 import it.frafol.cleanping.bungee.commands.PingCommand;
 import it.frafol.cleanping.bungee.commands.ReloadCommand;
 import it.frafol.cleanping.bungee.enums.BungeeConfig;
+import it.frafol.cleanping.bungee.enums.BungeeRedis;
+import it.frafol.cleanping.bungee.hooks.RedisListener;
 import it.frafol.cleanping.bungee.objects.TextFile;
 import net.byteflux.libby.BungeeLibraryManager;
 import net.byteflux.libby.Library;
@@ -13,6 +16,7 @@ public class CleanPing extends Plugin {
 
 	private TextFile configTextFile;
 	private TextFile messagesTextFile;
+	private TextFile redisTextFile;
 	public static CleanPing instance;
 
 	public static CleanPing getInstance() {
@@ -44,10 +48,24 @@ public class CleanPing extends Plugin {
 		getLogger().info("§7Loading §dconfiguration§7...");
 		configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
 		messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
+		redisTextFile = new TextFile(getDataFolder().toPath(), "redis.yml");
 
 		getLogger().info("§7Loading §dcommands§7...");
 		getProxy().getPluginManager().registerCommand(this, new PingCommand());
 		getProxy().getPluginManager().registerCommand(this, new ReloadCommand());
+
+		if (BungeeRedis.REDIS.get(Boolean.class) && getProxy().getPluginManager().getPlugin("RedisBungee") != null) {
+
+			final RedisBungeeAPI redisBungeeAPI = RedisBungeeAPI.getRedisBungeeApi();
+
+			getProxy().getPluginManager().registerListener(this, new RedisListener(this));
+
+			redisBungeeAPI.registerPubSubChannels("CleanPing-Request");
+			redisBungeeAPI.registerPubSubChannels("CleanPing-Response");
+
+			getLogger().info("§7Hooked into RedisBungee §dsuccessfully§7!");
+
+		}
 
 		if (BungeeConfig.STATS.get(Boolean.class)) {
 
@@ -73,6 +91,9 @@ public class CleanPing extends Plugin {
 	}
 	public YamlFile getMessagesTextFile() {
 		return getInstance().messagesTextFile.getConfig();
+	}
+	public YamlFile getRedisTextFile() {
+		return getInstance().redisTextFile.getConfig();
 	}
 
 	@Override

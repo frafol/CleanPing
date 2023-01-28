@@ -1,14 +1,17 @@
 package it.frafol.cleanping.velocity.commands;
 
+import com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import it.frafol.cleanping.velocity.enums.VelocityConfig;
 import it.frafol.cleanping.velocity.enums.VelocityMessages;
+import it.frafol.cleanping.velocity.enums.VelocityRedis;
 import net.kyori.adventure.text.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class PingCommand implements SimpleCommand {
 
@@ -23,20 +26,22 @@ public class PingCommand implements SimpleCommand {
 
 		final CommandSource source = invocation.source();
 
-		if(invocation.arguments().length == 0) {
+		if(!(source instanceof Player)) {
+			source.sendMessage(Component.text(VelocityMessages.ONLY_PLAYERS.color()
+					.replace("%prefix%", VelocityMessages.PREFIX.color())));
+			return;
+		}
 
-			if(!(source instanceof Player)) {
-				source.sendMessage(Component.text(VelocityMessages.ONLY_PLAYERS.color()
-						.replace("%prefix%", VelocityMessages.PREFIX.color())));
-				return;
-			}
+		final Player player = (Player) source;
 
-			final Player player = (Player) source;
+		if (invocation.arguments().length == 0) {
+
 			final long ping = player.getPing();
 
 			if (source.hasPermission(VelocityConfig.PING_PERMISSION.get(String.class))) {
 
 				if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
+
 					source.sendMessage(Component.text(VelocityMessages.PING.color()
 							.replace("%prefix%", VelocityMessages.PREFIX.color())
 							.replace("%ping%", VelocityConfig.LOW_MS_COLOR.color() + player.getPing())));
@@ -60,63 +65,108 @@ public class PingCommand implements SimpleCommand {
 
 		} else if (invocation.arguments().length == 1) {
 
-			if (!source.hasPermission(VelocityConfig.PING_OTHERS_PERMISSION.get(String.class))) {
-				source.sendMessage(Component.text(VelocityMessages.NO_PERMISSION.color()
-						.replace("%prefix%", VelocityMessages.PREFIX.color())));
-				return;
-			}
+			if (!(VelocityRedis.REDIS.get(Boolean.class) || proxyServer.getPluginManager().isLoaded("redisbungee"))
+					|| proxyServer.getPlayer(invocation.arguments()[0]).isPresent()) {
 
-			Optional<Player> target = proxyServer.getPlayer(invocation.arguments()[0]);
+				if (!source.hasPermission(VelocityConfig.PING_OTHERS_PERMISSION.get(String.class))) {
+					source.sendMessage(Component.text(VelocityMessages.NO_PERMISSION.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())));
+					return;
+				}
 
+				final Optional<Player> target = proxyServer.getPlayer(invocation.arguments()[0]);
 
-			if(!target.isPresent()) {
-				source.sendMessage(Component.text(VelocityMessages.NOT_ONLINE.color()
-						.replace("%prefix%", VelocityMessages.PREFIX.color())
-						.replace("%user%", (invocation.arguments()[0]))));
-				return;
-			}
+				if (!target.isPresent()) {
 
-			if (!(VelocityConfig.OTHERS_PING_OPTION.get(Boolean.class))) {
-				source.sendMessage(Component.text(VelocityMessages.USAGE.color()
-						.replace("%prefix%", VelocityMessages.PREFIX.color())));
-				return;
-			}
+					source.sendMessage(Component.text(VelocityMessages.NOT_ONLINE.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())
+							.replace("%user%", (invocation.arguments()[0]))));
 
-			final long ping = target.get().getPing();
+					return;
 
-			if (!(VelocityConfig.DYNAMIC_PING.get(Boolean.class))) {
-				source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
-						.replace("%prefix%", VelocityMessages.PREFIX.color())
-						.replace("%user%", (invocation.arguments()[0]))
-						.replace("%ping%", "" + target.get().getPing())));
-			}
+				}
 
-			if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
-				source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
-						.replace("%prefix%", VelocityMessages.PREFIX.color())
-						.replace("%user%", (invocation.arguments()[0]))
-						.replace("%ping%", VelocityConfig.LOW_MS_COLOR.color() + target.get().getPing())));
+				if (!(VelocityConfig.OTHERS_PING_OPTION.get(Boolean.class))) {
 
-			} else if (ping > VelocityConfig.MEDIUM_MS.get(Integer.class)
-					&& ping < VelocityConfig.HIGH_MS.get(Integer.class)) {
-				source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
-						.replace("%prefix%", VelocityMessages.PREFIX.color())
-						.replace("%user%", (invocation.arguments()[0]))
-						.replace("%ping%", VelocityConfig.MEDIUM_MS_COLOR.color() + target.get().getPing())));
+					source.sendMessage(Component.text(VelocityMessages.USAGE.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())));
+
+					return;
+				}
+
+				final long ping = target.get().getPing();
+
+				if (!(VelocityConfig.DYNAMIC_PING.get(Boolean.class))) {
+
+					source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())
+							.replace("%user%", (invocation.arguments()[0]))
+							.replace("%ping%", "" + target.get().getPing())));
+
+				}
+
+				if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
+
+					source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())
+							.replace("%user%", (invocation.arguments()[0]))
+							.replace("%ping%", VelocityConfig.LOW_MS_COLOR.color() + target.get().getPing())));
+
+				} else if (ping > VelocityConfig.MEDIUM_MS.get(Integer.class)
+						&& ping < VelocityConfig.HIGH_MS.get(Integer.class)) {
+
+					source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())
+							.replace("%user%", (invocation.arguments()[0]))
+							.replace("%ping%", VelocityConfig.MEDIUM_MS_COLOR.color() + target.get().getPing())));
+
+				} else {
+
+					source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())
+							.replace("%user%", (invocation.arguments()[0]))
+							.replace("%ping%", VelocityConfig.HIGH_MS_COLOR.color() + target.get().getPing())));
+
+				}
 
 			} else {
-				source.sendMessage(Component.text(VelocityMessages.OTHERS_PING.color()
-						.replace("%prefix%", VelocityMessages.PREFIX.color())
-						.replace("%user%", (invocation.arguments()[0]))
-						.replace("%ping%", VelocityConfig.HIGH_MS_COLOR.color() + target.get().getPing())));
+
+				if (!source.hasPermission(VelocityConfig.PING_OTHERS_PERMISSION.get(String.class))) {
+					source.sendMessage(Component.text(VelocityMessages.NO_PERMISSION.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())));
+					return;
+				}
+
+				final RedisBungeeAPI redisBungeeAPI = RedisBungeeAPI.getRedisBungeeApi();
+
+				final String target = invocation.arguments()[0];
+
+				if (redisBungeeAPI.getUuidFromName(target) == null) {
+					return;
+				}
+
+				final UUID uuid = redisBungeeAPI.getUuidFromName(target);
+
+				if (!redisBungeeAPI.isPlayerOnline(uuid)) {
+
+					source.sendMessage(Component.text(VelocityMessages.NOT_ONLINE.color()
+							.replace("%prefix%", VelocityMessages.PREFIX.color())
+							.replace("%user%", (invocation.arguments()[0]))));
+
+					return;
+
+				}
+
+				final String send_message = target + ";" + uuid + ";" + redisBungeeAPI.getProxy(uuid) + ";" + player.getUniqueId();
+				redisBungeeAPI.sendChannelMessage("CleanPing-Request", send_message);
+
 			}
 
 		} else {
+
 			source.sendMessage(Component.text(VelocityMessages.USAGE.color()
 					.replace("%prefix%", VelocityMessages.PREFIX.color())));
 
 		}
-
 	}
-
 }

@@ -1,9 +1,11 @@
 package it.frafol.cleanping.velocity;
 
 import com.google.inject.Inject;
+import com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
@@ -11,6 +13,8 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import it.frafol.cleanping.velocity.commands.PingCommand;
 import it.frafol.cleanping.velocity.commands.ReloadCommand;
 import it.frafol.cleanping.velocity.enums.VelocityConfig;
+import it.frafol.cleanping.velocity.enums.VelocityRedis;
+import it.frafol.cleanping.velocity.hooks.RedisListener;
 import it.frafol.cleanping.velocity.objects.TextFile;
 import lombok.Getter;
 import net.byteflux.libby.Library;
@@ -23,7 +27,8 @@ import java.nio.file.Path;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.1",
+		version = "1.2",
+		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
 
@@ -36,6 +41,7 @@ public class CleanPing {
 
 	private TextFile messagesTextFile;
 	private TextFile configTextFile;
+	private TextFile redisTextFile;
 	private static CleanPing instance;
 
 	public static CleanPing getInstance() {
@@ -78,6 +84,7 @@ public class CleanPing {
 		logger.info("§7Loading §dconfiguration§7...");
 		configTextFile = new TextFile(path, "config.yml");
 		messagesTextFile = new TextFile(path, "messages.yml");
+		redisTextFile = new TextFile(path, "redis.yml");
 
 		logger.info("§7Loading §dcommands§7...");
 		getInstance().getServer().getCommandManager().register
@@ -92,6 +99,19 @@ public class CleanPing {
 			metricsFactory.make(this, 16458);
 
 			logger.info("§7Metrics loaded §dsuccessfully§7!");
+
+		}
+
+		if (VelocityRedis.REDIS.get(Boolean.class) && getInstance().getServer().getPluginManager().isLoaded("redisbungee")) {
+
+			final RedisBungeeAPI redisBungeeAPI = RedisBungeeAPI.getRedisBungeeApi();
+
+			server.getEventManager().register(this, new RedisListener(this));
+
+			redisBungeeAPI.registerPubSubChannels("CleanPing-Request");
+			redisBungeeAPI.registerPubSubChannels("CleanPing-Response");
+
+			logger.info("§7Hooked into RedisBungee §dsuccessfully§7!");
 
 		}
 

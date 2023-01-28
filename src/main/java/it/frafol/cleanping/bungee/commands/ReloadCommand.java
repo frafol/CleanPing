@@ -19,14 +19,14 @@ public class ReloadCommand extends Command {
     public void execute(CommandSender source, String[] strings) {
 
         if (!source.hasPermission(BungeeConfig.RELOAD_PERMISSION.get(String.class))) {
-            source.sendMessage(new TextComponent(BungeeMessages.NO_PERMISSION.color()
+            source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NO_PERMISSION.color()
                     .replace("%prefix%", BungeeMessages.PREFIX.color())));
             return;
         }
 
         TextFile.reloadAll();
 
-        source.sendMessage(new TextComponent(BungeeMessages.RELOADED.color()
+        source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.RELOADED.color()
                 .replace("%prefix%", BungeeMessages.PREFIX.color())));
     }
 }

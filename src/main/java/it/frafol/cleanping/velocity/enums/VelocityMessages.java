@@ -1,6 +1,7 @@
 package it.frafol.cleanping.velocity.enums;
 
 import it.frafol.cleanping.velocity.CleanPing;
+import org.jetbrains.annotations.NotNull;
 
 public enum VelocityMessages {
 
@@ -25,11 +26,11 @@ public enum VelocityMessages {
         this.path = path;
     }
 
-    public <T> T get(Class<T> clazz) {
+    public <T> T get(@NotNull Class<T> clazz) {
         return clazz.cast(instance.getMessagesTextFile().getConfig().get(path));
     }
 
-    public String color() {
+    public @NotNull String color() {
         return get(String.class).replace("&", "§");
     }
 

@@ -1,0 +1,13 @@
+#   ___ _                 ___ _
+#  / __| |___ __ _ _ _   | _ (_)_ _  __ _
+# | (__| / -_) _` | ' \  |  _/ | ' \/ _` |
+# \___|_\___\__,_|_||_|  |_| |_|_||_\__, |
+#                                   |___/
+#
+# RedisBungee file. Made with ❤ by frafol.
+# For support: discord.io/futuredevelopment
+
+# NOTE: This feature is in alpha, report all errors on discord.io/futuredevelopment.
+redis:
+  # Toggle RedisBungee Hook (Compatible with BungeeCord and Velocity)
+  enabled: false

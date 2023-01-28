@@ -1,6 +1,7 @@
 package it.frafol.cleanping.bungee.enums;
 
 import it.frafol.cleanping.bungee.CleanPing;
+import org.jetbrains.annotations.NotNull;
 
 public enum BungeeMessages {
 
@@ -25,11 +26,11 @@ public enum BungeeMessages {
         this.path = path;
     }
 
-    public <T> T get(Class<T> clazz) {
+    public <T> T get(@NotNull Class<T> clazz) {
         return clazz.cast(instance.getMessagesTextFile().get(path));
     }
 
-    public String color() {
+    public @NotNull String color() {
         return get(String.class).replace("&", "§");
     }
 
