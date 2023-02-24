@@ -1,6 +1,7 @@
 package it.frafol.cleanping.bukkit.enums;
 
 import it.frafol.cleanping.bukkit.CleanPing;
+import org.jetbrains.annotations.NotNull;
 
 public enum SpigotMessages {
 
@@ -25,12 +26,12 @@ public enum SpigotMessages {
         this.path = path;
     }
 
-    public <T> T get(Class<T> clazz) {
-        return clazz.cast(instance.getMessagesTextFile().get(path));
+    public @NotNull String color() {
+        return get(String.class).replace("&", "§");
     }
 
-    public String color() {
-        return get(String.class).replace("&", "§");
+    public <T> T get(@NotNull Class<T> clazz) {
+        return clazz.cast(instance.getMessagesTextFile().get(path));
     }
 
 }

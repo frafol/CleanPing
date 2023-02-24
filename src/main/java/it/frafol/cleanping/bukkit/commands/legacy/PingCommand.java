@@ -5,6 +5,7 @@ import it.frafol.cleanping.bukkit.enums.SpigotConfig;
 import it.frafol.cleanping.bukkit.enums.SpigotMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +21,7 @@ public class PingCommand implements CommandExecutor {
 
 
 	@Override
-	public boolean onCommand(org.bukkit.command.@NotNull CommandSender source, @NotNull Command command, @NotNull String s, String[] args) {
+	public boolean onCommand(@NotNull CommandSender source, @NotNull Command command, @NotNull String s, String @NotNull [] args) {
 
 		if (args.length == 0) {
 
