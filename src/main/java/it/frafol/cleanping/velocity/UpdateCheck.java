@@ -12,15 +12,13 @@ public class UpdateCheck {
 
     public CleanPing PLUGIN;
 
-    public static final CleanPing instance = CleanPing.getInstance();
-
     public UpdateCheck(CleanPing plugin) {
         this.PLUGIN = plugin;
     }
 
     @Subscribe
     public void getVersion(final Consumer<String> consumer) {
-        instance.getServer().getScheduler().buildTask(PLUGIN, () -> {
+        PLUGIN.getServer().getScheduler().buildTask(PLUGIN, () -> {
             try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=105475")
                     .openStream(); Scanner scanner = new Scanner(inputStream)) {
                 if (scanner.hasNext()) {

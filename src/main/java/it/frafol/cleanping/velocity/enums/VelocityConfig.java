@@ -24,14 +24,13 @@ public enum VelocityConfig {
     DYNAMIC_PING("settings.dynamic_ping");
 
     private final String path;
-    public static final CleanPing instance = CleanPing.getInstance();
 
     VelocityConfig(String path) {
         this.path = path;
     }
 
     public <T> T get(@NotNull Class<T> clazz) {
-        return clazz.cast(instance.getConfigTextFile().getConfig().get(path));
+        return clazz.cast(CleanPing.getInstance().getConfigTextFile().getConfig().get(path));
     }
 
     public @NotNull String color() {

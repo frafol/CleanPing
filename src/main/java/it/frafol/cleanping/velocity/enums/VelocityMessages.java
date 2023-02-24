@@ -9,10 +9,7 @@ public enum VelocityMessages {
 
     USAGE("messages.usage"),
 
-    ONLY_PLAYERS("messages.only_players"),
     NOT_ONLINE("messages.not_online"),
-
-    NO_PERMISSION("messages.no_permission"),
 
     PING("messages.ping"),
     OTHERS_PING("messages.others_ping"),
@@ -20,14 +17,13 @@ public enum VelocityMessages {
     RELOADED("messages.reloaded");
 
     private final String path;
-    public static final CleanPing instance = CleanPing.getInstance();
 
     VelocityMessages(String path) {
         this.path = path;
     }
 
     public <T> T get(@NotNull Class<T> clazz) {
-        return clazz.cast(instance.getMessagesTextFile().getConfig().get(path));
+        return clazz.cast(CleanPing.getInstance().getMessagesTextFile().getConfig().get(path));
     }
 
     public @NotNull String color() {

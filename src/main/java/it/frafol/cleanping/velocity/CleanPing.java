@@ -87,12 +87,8 @@ public class CleanPing {
 		redisTextFile = new TextFile(path, "redis.yml");
 
 		logger.info("§7Loading §dcommands§7...");
-		getInstance().getServer().getCommandManager().register
-				(server.getCommandManager().metaBuilder("ping").aliases("cleanping")
-						.build(), new PingCommand(server));
-		getInstance().getServer().getCommandManager().register
-				(server.getCommandManager().metaBuilder("pingreload").aliases("cleanpingreload")
-						.build(), new ReloadCommand(this));
+		PingCommand.register(server, this);
+		ReloadCommand.register(server, this);
 
 		if (VelocityConfig.STATS.get(Boolean.class)) {
 
@@ -102,7 +98,7 @@ public class CleanPing {
 
 		}
 
-		if (VelocityRedis.REDIS.get(Boolean.class) && getInstance().getServer().getPluginManager().isLoaded("redisbungee")) {
+		if (VelocityRedis.REDIS.get(Boolean.class) && server.getPluginManager().isLoaded("redisbungee")) {
 
 			final RedisBungeeAPI redisBungeeAPI = RedisBungeeAPI.getRedisBungeeApi();
 
