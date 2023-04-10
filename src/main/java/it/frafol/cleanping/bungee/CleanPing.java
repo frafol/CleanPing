@@ -33,7 +33,7 @@ public class CleanPing extends Plugin {
 		Library yaml = Library.builder()
 				.groupId("me{}carleslc{}Simple-YAML")
 				.artifactId("Simple-Yaml")
-				.version("1.8.3")
+				.version("1.8.4")
 				.build();
 
 		bungeeLibraryManager.addJitPack();

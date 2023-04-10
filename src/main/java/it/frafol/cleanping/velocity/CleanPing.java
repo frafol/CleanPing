@@ -27,7 +27,7 @@ import java.nio.file.Path;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.2",
+		version = "1.2.1",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
@@ -69,7 +69,7 @@ public class CleanPing {
 		Library yaml = Library.builder()
 				.groupId("me{}carleslc{}Simple-YAML")
 				.artifactId("Simple-Yaml")
-				.version("1.8.3")
+				.version("1.8.4")
 				.build();
 
 		velocityLibraryManager.addJitPack();
