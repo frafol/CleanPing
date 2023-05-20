@@ -2,6 +2,7 @@ name: CleanPing
 version: '${project.version}'
 main: it.frafol.cleanping.bukkit.CleanPing
 authors: [ frafol ]
+folia-supported: true
 description: "Adds /ping command to check your and player's ping."
 commands:
   cleanping:

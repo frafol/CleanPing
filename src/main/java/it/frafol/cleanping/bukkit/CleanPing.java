@@ -62,6 +62,10 @@ public class CleanPing extends JavaPlugin {
 			return;
 		}
 
+		if (isFolia()) {
+			getLogger().warning("Support for Folia has not been tested and is only for experimental purposes.");
+		}
+
 		getLogger().info("Loading configuration...");
 		configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
 		messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
@@ -103,15 +107,29 @@ public class CleanPing extends JavaPlugin {
 
 		}
 
-		if (SpigotConfig.UPDATE_CHECK.get(Boolean.class)) {
-			new UpdateCheck(this).getVersion(version -> {
-				if (!this.getDescription().getVersion().equals(version)) {
-					getLogger().warning("There is a new update available, download it on SpigotMC!");
-				}
-			});
+		if (!isFolia()) {
+			if (SpigotConfig.UPDATE_CHECK.get(Boolean.class)) {
+				new UpdateCheck(this).getVersion(version -> {
+					if (!this.getDescription().getVersion().equals(version)) {
+						getLogger().warning("There is a new update available, download it on SpigotMC!");
+					}
+				});
+			}
+		} else {
+			getLogger().severe("Folia does not support the update checker.");
 		}
 
+
 		getLogger().info("Plugin successfully loaded!");
+	}
+
+	public static boolean isFolia() {
+		try {
+			Class.forName("io.papermc.paper.threadedregions.RegionizedServerInitEvent");
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+		return true;
 	}
 
 	public YamlFile getConfigTextFile() {

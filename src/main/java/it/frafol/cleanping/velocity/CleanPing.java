@@ -27,7 +27,7 @@ import java.nio.file.Path;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.2.1",
+		version = "1.3",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
