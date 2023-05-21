@@ -4,6 +4,7 @@ main: it.frafol.cleanping.bukkit.CleanPing
 authors: [ frafol ]
 folia-supported: true
 description: "Adds /ping command to check your and player's ping."
+api-version: 1.13
 commands:
   cleanping:
     description: Show your ping
