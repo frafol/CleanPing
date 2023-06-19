@@ -14,20 +14,29 @@ import it.frafol.cleanping.velocity.commands.PingCommand;
 import it.frafol.cleanping.velocity.commands.ReloadCommand;
 import it.frafol.cleanping.velocity.enums.VelocityConfig;
 import it.frafol.cleanping.velocity.enums.VelocityRedis;
+import it.frafol.cleanping.velocity.enums.VelocityVersion;
 import it.frafol.cleanping.velocity.hooks.RedisListener;
 import it.frafol.cleanping.velocity.objects.TextFile;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.VelocityLibraryManager;
 import org.slf4j.Logger;
+import ru.vyarus.yaml.updater.YamlUpdater;
+import ru.vyarus.yaml.updater.util.FileUtils;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 @Getter
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.3",
+		version = "1.4",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
@@ -42,7 +51,10 @@ public class CleanPing {
 	private TextFile messagesTextFile;
 	private TextFile configTextFile;
 	private TextFile redisTextFile;
+	private TextFile versionTextFile;
 	private static CleanPing instance;
+
+	public boolean updated = false;
 
 	public static CleanPing getInstance() {
 		return instance;
@@ -72,7 +84,15 @@ public class CleanPing {
 				.version("1.8.4")
 				.build();
 
+		Library updater = Library.builder()
+				.groupId("ru{}vyarus")
+				.artifactId("yaml-config-updater")
+				.version("1.4.2")
+				.build();
+
 		velocityLibraryManager.addJitPack();
+		velocityLibraryManager.addMavenCentral();
+		velocityLibraryManager.loadLibrary(updater);
 		velocityLibraryManager.loadLibrary(yaml);
 
 		logger.info("\n§d   ___ _                 ___ _           \n" +
@@ -82,9 +102,8 @@ public class CleanPing {
 				"                                   |___/ \n");
 
 		logger.info("§7Loading §dconfiguration§7...");
-		configTextFile = new TextFile(path, "config.yml");
-		messagesTextFile = new TextFile(path, "messages.yml");
-		redisTextFile = new TextFile(path, "redis.yml");
+		loadFiles();
+		updateConfig();
 
 		logger.info("§7Loading §dcommands§7...");
 		PingCommand.register(server, this);
@@ -93,7 +112,6 @@ public class CleanPing {
 		if (VelocityConfig.STATS.get(Boolean.class)) {
 
 			metricsFactory.make(this, 16458);
-
 			logger.info("§7Metrics loaded §dsuccessfully§7!");
 
 		}
@@ -113,11 +131,23 @@ public class CleanPing {
 
 		if (VelocityConfig.UPDATE_CHECK.get(Boolean.class)) {
 			new UpdateCheck(this).getVersion(version -> {
-				if (container.getDescription().getVersion().isPresent()) {
-					if (!container.getDescription().getVersion().get().equals(version)) {
+
+				if (Integer.parseInt(container.getDescription().getVersion().get().replace(".", "")) < Integer.parseInt(version.replace(".", ""))) {
+
+					if (VelocityConfig.AUTO_UPDATE.get(Boolean.class) && !updated) {
+						autoUpdate();
+						return;
+					}
+
+					if (!updated) {
 						logger.warn("There is a new update available, download it on SpigotMC!");
 					}
 				}
+
+				if (Integer.parseInt(container.getDescription().getVersion().get().replace(".", "")) > Integer.parseInt(version.replace(".", ""))) {
+					logger.warn("You are using a development version, please report any bugs!");
+				}
+
 			});
 		}
 
@@ -133,4 +163,58 @@ public class CleanPing {
 		logger.info("§7Plugin successfully §ddisabled§7!");
 	}
 
+	private void loadFiles() {
+		configTextFile = new TextFile(path, "config.yml");
+		messagesTextFile = new TextFile(path, "messages.yml");
+		redisTextFile = new TextFile(path, "redis.yml");
+		versionTextFile = new TextFile(path, "version.yml");
+	}
+
+	private String getFileNameFromUrl(String fileUrl) {
+		int slashIndex = fileUrl.lastIndexOf('/');
+		if (slashIndex != -1 && slashIndex < fileUrl.length() - 1) {
+			return fileUrl.substring(slashIndex + 1);
+		}
+		throw new IllegalArgumentException("Invalid file URL");
+	}
+
+	@SneakyThrows
+	private void downloadFile(String fileUrl, File outputFile) {
+		URL url = new URL(fileUrl);
+		try (InputStream inputStream = url.openStream()) {
+			Files.copy(inputStream, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+	}
+
+	@SneakyThrows
+	private void updateConfig() {
+		if (container.getDescription().getVersion().isPresent() && (!container.getDescription().getVersion().get().equals(VelocityVersion.VERSION.get(String.class)))) {
+
+			logger.info("§7Creating new §dconfigurations§7...");
+			YamlUpdater.create(new File(path + "/config.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/config.yml"))
+					.backup(true)
+					.update();
+			YamlUpdater.create(new File(path + "/messages.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/messages.yml"))
+					.backup(true)
+					.update();
+			YamlUpdater.create(new File(path + "/redis.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/redis.yml"))
+					.backup(true)
+					.update();
+			versionTextFile.getConfig().set("version", container.getDescription().getVersion().get());
+			versionTextFile.getConfig().save();
+			loadFiles();
+		}
+	}
+
+	public void autoUpdate() {
+		String fileUrl = "https://github.com/frafol/CleanPing/releases/download/release/CleanPing.jar";
+		String destination = "./plugins/";
+
+		String fileName = getFileNameFromUrl(fileUrl);
+		File outputFile = new File(destination, fileName);
+
+		downloadFile(fileUrl, outputFile);
+		updated = true;
+		logger.warn("CleanPing successfully updated, a restart is required.");
+	}
 }

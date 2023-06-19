@@ -9,6 +9,7 @@ public enum SpigotConfig {
     PING_OTHERS_PERMISSION("permissions.others_ping"),
     RELOAD_PERMISSION("permissions.reload"),
     UPDATE_CHECK("settings.update_check"),
+    AUTO_UPDATE("settings.auto_update"),
 
     LOW_MS_COLOR("dynamic.low_ms_color"),
     MEDIUM_MS_COLOR("dynamic.medium_ms_color"),

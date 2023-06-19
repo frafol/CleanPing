@@ -5,19 +5,32 @@ import it.frafol.cleanping.bungee.commands.PingCommand;
 import it.frafol.cleanping.bungee.commands.ReloadCommand;
 import it.frafol.cleanping.bungee.enums.BungeeConfig;
 import it.frafol.cleanping.bungee.enums.BungeeRedis;
+import it.frafol.cleanping.bungee.enums.BungeeVersion;
 import it.frafol.cleanping.bungee.hooks.RedisListener;
 import it.frafol.cleanping.bungee.objects.TextFile;
+import lombok.SneakyThrows;
 import net.byteflux.libby.BungeeLibraryManager;
 import net.byteflux.libby.Library;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.simpleyaml.configuration.file.YamlFile;
+import ru.vyarus.yaml.updater.YamlUpdater;
+import ru.vyarus.yaml.updater.util.FileUtils;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class CleanPing extends Plugin {
 
 	private TextFile configTextFile;
 	private TextFile messagesTextFile;
 	private TextFile redisTextFile;
+	private TextFile versionTextFile;
 	public static CleanPing instance;
+
+	public boolean updated = false;
 
 	public static CleanPing getInstance() {
 		return instance;
@@ -36,7 +49,15 @@ public class CleanPing extends Plugin {
 				.version("1.8.4")
 				.build();
 
+		Library updater = Library.builder()
+				.groupId("ru{}vyarus")
+				.artifactId("yaml-config-updater")
+				.version("1.4.2")
+				.build();
+
 		bungeeLibraryManager.addJitPack();
+		bungeeLibraryManager.addMavenCentral();
+		bungeeLibraryManager.loadLibrary(updater);
 		bungeeLibraryManager.loadLibrary(yaml);
 
 		getLogger().info("\n§d   ___ _                 ___ _           \n" +
@@ -46,9 +67,8 @@ public class CleanPing extends Plugin {
 				"                                   |___/ \n");
 
 		getLogger().info("§7Loading §dconfiguration§7...");
-		configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
-		messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
-		redisTextFile = new TextFile(getDataFolder().toPath(), "redis.yml");
+		loadFiles();
+		updateConfig();
 
 		getLogger().info("§7Loading §dcommands§7...");
 		getProxy().getPluginManager().registerCommand(this, new PingCommand());
@@ -77,9 +97,23 @@ public class CleanPing extends Plugin {
 
 		if (BungeeConfig.UPDATE_CHECK.get(Boolean.class)) {
 			new UpdateCheck(this).getVersion(version -> {
-				if (!this.getDescription().getVersion().equals(version)) {
-					getLogger().warning("§eThere is a new update available, download it on SpigotMC!");
+
+				if (Integer.parseInt(getDescription().getVersion().replace(".", "")) < Integer.parseInt(version.replace(".", ""))) {
+
+					if (BungeeConfig.AUTO_UPDATE.get(Boolean.class) && !updated) {
+						autoUpdate();
+						return;
+					}
+
+					if (!updated) {
+						getLogger().warning("§eThere is a new update available, download it on SpigotMC!");
+					}
 				}
+
+				if (Integer.parseInt(getDescription().getVersion().replace(".", "")) > Integer.parseInt(version.replace(".", ""))) {
+					getLogger().warning("§eYou are using a development version, please report any bugs!");
+				}
+
 			});
 		}
 
@@ -95,6 +129,9 @@ public class CleanPing extends Plugin {
 	public YamlFile getRedisTextFile() {
 		return getInstance().redisTextFile.getConfig();
 	}
+	public YamlFile getVersionTextFile() {
+		return getInstance().versionTextFile.getConfig();
+	}
 
 	@Override
 	public void onDisable() {
@@ -105,4 +142,57 @@ public class CleanPing extends Plugin {
 		getLogger().info("§7Plugin successfully §ddisabled§7!");
 	}
 
+	private void loadFiles() {
+		configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
+		messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
+		redisTextFile = new TextFile(getDataFolder().toPath(), "redis.yml");
+		versionTextFile = new TextFile(getDataFolder().toPath(), "version.yml");
+	}
+
+	public void autoUpdate() {
+		String fileUrl = "https://github.com/frafol/CleanPing/releases/download/release/CleanPing.jar";
+		String destination = "./plugins/";
+
+		String fileName = getFileNameFromUrl(fileUrl);
+		File outputFile = new File(destination, fileName);
+
+		downloadFile(fileUrl, outputFile);
+		updated = true;
+		getLogger().warning("§eCleanPing successfully updated, a restart is required.");
+	}
+
+	private String getFileNameFromUrl(String fileUrl) {
+		int slashIndex = fileUrl.lastIndexOf('/');
+		if (slashIndex != -1 && slashIndex < fileUrl.length() - 1) {
+			return fileUrl.substring(slashIndex + 1);
+		}
+		throw new IllegalArgumentException("Invalid file URL");
+	}
+
+	@SneakyThrows
+	private void downloadFile(String fileUrl, File outputFile) {
+		URL url = new URL(fileUrl);
+		try (InputStream inputStream = url.openStream()) {
+			Files.copy(inputStream, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+	}
+
+	@SneakyThrows
+	private void updateConfig() {
+		if (!getDescription().getVersion().equals(BungeeVersion.VERSION.get(String.class))) {
+			getLogger().info("§7Creating new §dconfigurations§7...");
+			YamlUpdater.create(new File(getDataFolder().toPath() + "/config.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/config.yml"))
+					.backup(true)
+					.update();
+			YamlUpdater.create(new File(getDataFolder().toPath() + "/messages.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/messages.yml"))
+					.backup(true)
+					.update();
+			YamlUpdater.create(new File(getDataFolder().toPath() + "/redis.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/redis.yml"))
+					.backup(true)
+					.update();
+			versionTextFile.getConfig().set("version", getDescription().getVersion());
+			versionTextFile.getConfig().save();
+			loadFiles();
+		}
+	}
 }
