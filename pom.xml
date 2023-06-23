@@ -6,7 +6,7 @@
 
     <groupId>it.frafol</groupId>
     <artifactId>cleanping</artifactId>
-    <version>1.4</version>
+    <version>1.4.1</version>
     <packaging>jar</packaging>
 
     <name>CleanPing</name>
@@ -82,17 +82,17 @@
         <dependency>
             <groupId>net.byteflux</groupId>
             <artifactId>libby-bukkit</artifactId>
-            <version>1.1.5</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>net.byteflux</groupId>
             <artifactId>libby-velocity</artifactId>
-            <version>1.1.5</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>net.byteflux</groupId>
             <artifactId>libby-bungee</artifactId>
-            <version>1.1.5</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.velocitypowered</groupId>

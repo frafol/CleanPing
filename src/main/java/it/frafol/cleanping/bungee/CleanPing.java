@@ -43,7 +43,8 @@ public class CleanPing extends Plugin {
 
 		BungeeLibraryManager bungeeLibraryManager = new BungeeLibraryManager(this);
 
-		Library yaml = Library.builder()
+		Library yaml;
+		yaml = Library.builder()
 				.groupId("me{}carleslc{}Simple-YAML")
 				.artifactId("Simple-Yaml")
 				.version("1.8.4")
@@ -58,6 +59,19 @@ public class CleanPing extends Plugin {
 		bungeeLibraryManager.addJitPack();
 		bungeeLibraryManager.addMavenCentral();
 		bungeeLibraryManager.loadLibrary(updater);
+
+		try {
+			bungeeLibraryManager.loadLibrary(yaml);
+		} catch (RuntimeException ignored) {
+			getLogger().severe("Failed to load Simple-YAML library. Trying to download it from GitHub...");
+			yaml = Library.builder()
+					.groupId("me{}carleslc{}Simple-YAML")
+					.artifactId("Simple-Yaml")
+					.version("1.8.4")
+					.url("https://github.com/Carleslc/Simple-YAML/releases/download/1.8.4/Simple-Yaml-1.8.4.jar")
+					.build();
+		}
+
 		bungeeLibraryManager.loadLibrary(yaml);
 
 		getLogger().info("\n§d   ___ _                 ___ _           \n" +

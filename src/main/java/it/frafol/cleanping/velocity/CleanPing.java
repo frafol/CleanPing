@@ -36,7 +36,7 @@ import java.nio.file.StandardCopyOption;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.4",
+		version = "1.4.1",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
@@ -78,7 +78,8 @@ public class CleanPing {
 
 		VelocityLibraryManager<CleanPing> velocityLibraryManager = new VelocityLibraryManager<>(getLogger(), path, getServer().getPluginManager(), this);
 
-		Library yaml = Library.builder()
+		Library yaml;
+		yaml = Library.builder()
 				.groupId("me{}carleslc{}Simple-YAML")
 				.artifactId("Simple-Yaml")
 				.version("1.8.4")
@@ -93,6 +94,19 @@ public class CleanPing {
 		velocityLibraryManager.addJitPack();
 		velocityLibraryManager.addMavenCentral();
 		velocityLibraryManager.loadLibrary(updater);
+
+		try {
+			velocityLibraryManager.loadLibrary(yaml);
+		} catch (RuntimeException ignored) {
+			logger.error("Failed to load Simple-YAML library. Trying to download it from GitHub...");
+			yaml = Library.builder()
+					.groupId("me{}carleslc{}Simple-YAML")
+					.artifactId("Simple-Yaml")
+					.version("1.8.4")
+					.url("https://github.com/Carleslc/Simple-YAML/releases/download/1.8.4/Simple-Yaml-1.8.4.jar")
+					.build();
+		}
+
 		velocityLibraryManager.loadLibrary(yaml);
 
 		logger.info("\n§d   ___ _                 ___ _           \n" +
