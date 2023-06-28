@@ -12,8 +12,9 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class PingCommand extends Command implements TabExecutor {
@@ -179,16 +180,19 @@ public class PingCommand extends Command implements TabExecutor {
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String @NotNull [] args) {
 
-		Set<String> list = new HashSet<>();
-
-		if (args.length == 1) {
-
-			for (ProxiedPlayer players :  ProxyServer.getInstance().getPlayers()) {
-				list.add(players.getName());
-			}
-
+		if (args.length != 1) {
+			return Collections.emptyList();
 		}
 
-		return list;
+		String partialName = args[0].toLowerCase();
+
+		List<String> completions = new ArrayList<>();
+		for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+			if (player.getName().toLowerCase().startsWith(partialName)) {
+				completions.add(player.getName());
+			}
+		}
+
+		return completions;
 	}
 }

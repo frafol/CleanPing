@@ -19,7 +19,6 @@ public class PingCommand implements CommandExecutor {
 
 	}
 
-
 	@Override
 	public boolean onCommand(@NotNull CommandSender source, @NotNull Command command, @NotNull String s, String @NotNull [] args) {
 

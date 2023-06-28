@@ -17,7 +17,8 @@ import it.frafol.cleanping.velocity.enums.VelocityMessages;
 import it.frafol.cleanping.velocity.enums.VelocityRedis;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 public final class PingCommand  {
 
@@ -40,8 +41,32 @@ public final class PingCommand  {
                 .then(RequiredArgumentBuilder.<CommandSource, String>argument("player", StringArgumentType.word())
                         .requires(src -> src.hasPermission(VelocityConfig.PING_OTHERS_PERMISSION.get(String.class)))
                         .suggests((ctx, builder) -> {
-                            proxyServer.getAllPlayers().forEach(player -> builder.suggest(player.getUsername()));
+
+                            String partialName;
+
+                            try {
+                                partialName = ctx.getArgument("player", String.class).toLowerCase();
+                            } catch (IllegalArgumentException ignored) {
+                                partialName = "";
+                            }
+
+                            if (partialName.isEmpty()) {
+
+                                proxyServer.getAllPlayers().stream()
+                                        .map(Player::getUsername)
+                                        .forEach(builder::suggest);
+                                return builder.buildFuture();
+
+                            }
+
+                            String finalPartialName = partialName;
+                            proxyServer.getAllPlayers().stream()
+                                    .map(Player::getUsername)
+                                    .filter(name -> name.toLowerCase().startsWith(finalPartialName))
+                                    .forEach(builder::suggest);
+
                             return builder.buildFuture();
+
                         })
                         .executes(ctx -> {
                             final Player player = (Player) ctx.getSource();
