@@ -39,6 +39,8 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 	private TextFile versionTextFile;
 	public static CleanPing instance;
 
+	boolean isWindows = System.getProperty("os.name").startsWith("Windows");
+
 	public boolean updated = false;
 
 	public static CleanPing getInstance() {
@@ -234,6 +236,11 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 	}
 
 	public void autoUpdate() {
+
+		if (isWindows) {
+			return;
+		}
+
 		String fileUrl = "https://github.com/frafol/CleanPing/releases/download/release/CleanPing.jar";
 		String destination = "./plugins/";
 

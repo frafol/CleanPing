@@ -36,7 +36,7 @@ import java.nio.file.StandardCopyOption;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.4.2",
+		version = "1.4.3",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
@@ -47,6 +47,8 @@ public class CleanPing {
 	private final ProxyServer server;
 	private final Path path;
 	private final Metrics.Factory metricsFactory;
+
+	boolean isWindows = System.getProperty("os.name").startsWith("Windows");
 
 	private TextFile messagesTextFile;
 	private TextFile configTextFile;
@@ -146,6 +148,10 @@ public class CleanPing {
 		if (VelocityConfig.UPDATE_CHECK.get(Boolean.class)) {
 			new UpdateCheck(this).getVersion(version -> {
 
+				if (!container.getDescription().getVersion().isPresent()) {
+					return;
+				}
+
 				if (Integer.parseInt(container.getDescription().getVersion().get().replace(".", "")) < Integer.parseInt(version.replace(".", ""))) {
 
 					if (VelocityConfig.AUTO_UPDATE.get(Boolean.class) && !updated) {
@@ -221,6 +227,11 @@ public class CleanPing {
 	}
 
 	public void autoUpdate() {
+
+		if (isWindows) {
+			return;
+		}
+
 		String fileUrl = "https://github.com/frafol/CleanPing/releases/download/release/CleanPing.jar";
 		String destination = "./plugins/";
 
