@@ -29,28 +29,24 @@ public class PingCommand extends Command implements TabExecutor {
 	@Override
 	public void execute(CommandSender source, String[] args) {
 
-		if (!(source instanceof ProxiedPlayer)) {
-			source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.ONLY_PLAYERS.color()
-					.replace("%prefix%", BungeeMessages.PREFIX.color())));
-			return;
-		}
+		if (args.length == 0) {
 
-		final ProxiedPlayer player = (ProxiedPlayer) source;
+			if (!(source instanceof ProxiedPlayer)) {
+				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.ONLY_PLAYERS.color()
+						.replace("%prefix%", BungeeMessages.PREFIX.color())));
+				return;
+			}
 
-		if(args.length == 0) {
-
+			final ProxiedPlayer player = (ProxiedPlayer) source;
 			final long ping = player.getPing();
 
 			if (source.hasPermission(BungeeConfig.PING_PERMISSION.get(String.class))) {
 
 				if (!(BungeeConfig.DYNAMIC_PING.get(Boolean.class))) {
-
 					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
 							.replace("%ping%", String.valueOf(player.getPing()))));
-
 					return;
-
 				}
 
 				if (ping < BungeeConfig.MEDIUM_MS.get(Integer.class)) {
@@ -80,7 +76,6 @@ public class PingCommand extends Command implements TabExecutor {
 			if (!(BungeeRedis.REDIS.get(Boolean.class) || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null)
 					|| ProxyServer.getInstance().getPlayer(args[0]) != null) {
 
-
 				if (!source.hasPermission(BungeeConfig.PING_OTHERS_PERMISSION.get(String.class))) {
 					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NO_PERMISSION.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())));
@@ -108,9 +103,7 @@ public class PingCommand extends Command implements TabExecutor {
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
 							.replace("%user%", (args[0]))
 							.replace("%ping%", String.valueOf(ProxyServer.getInstance().getPlayer(args[0]).getPing()))));
-
 					return;
-
 				}
 
 				if (ping < BungeeConfig.MEDIUM_MS.get(Integer.class)) {
@@ -144,7 +137,6 @@ public class PingCommand extends Command implements TabExecutor {
 				}
 
 				final RedisBungeeAPI redisBungeeAPI = RedisBungeeAPI.getRedisBungeeApi();
-
 				final String target = args[0];
 
 				if (redisBungeeAPI.getUuidFromName(target) == null) {
@@ -154,25 +146,25 @@ public class PingCommand extends Command implements TabExecutor {
 				final UUID uuid = redisBungeeAPI.getUuidFromName(target);
 
 				if (!redisBungeeAPI.isPlayerOnline(uuid)) {
-
 					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NOT_ONLINE.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
 							.replace("%user%", (args[0]))));
-
 					return;
-
 				}
 
+				if (!(source instanceof ProxiedPlayer)) {
+					return;
+				}
+
+				final ProxiedPlayer player = (ProxiedPlayer) source;
 				final String send_message = target + ";" + uuid + ";" + redisBungeeAPI.getProxy(uuid) + ";" + player.getUniqueId();
 				redisBungeeAPI.sendChannelMessage("CleanPing-Request", send_message);
 
 			}
 
 		} else {
-
 			source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.USAGE.color()
 					.replace("%prefix%", BungeeMessages.PREFIX.color())));
-
 		}
 
 	}

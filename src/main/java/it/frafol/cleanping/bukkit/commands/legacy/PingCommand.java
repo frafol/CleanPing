@@ -72,7 +72,6 @@ public class PingCommand implements CommandExecutor {
 				return false;
 			}
 
-
 			if (plugin.getServer().getPlayer(args[0]) == null) {
 				source.sendMessage(SpigotMessages.NOT_ONLINE.color()
 						.replace("%prefix%", SpigotMessages.PREFIX.color())
@@ -92,7 +91,7 @@ public class PingCommand implements CommandExecutor {
 				source.sendMessage(SpigotMessages.OTHERS_PING.color()
 						.replace("%prefix%", SpigotMessages.PREFIX.color())
 						.replace("%user%", (args[0]))
-						.replace("%ping%", "" + CleanPing.getPing(plugin.getServer().getPlayer(args[0]))));
+						.replace("%ping%", String.valueOf(CleanPing.getPing(plugin.getServer().getPlayer(args[0])))));
 				return false;
 			}
 

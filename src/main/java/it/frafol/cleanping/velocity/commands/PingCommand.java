@@ -24,8 +24,17 @@ public final class PingCommand  {
 
     public static void register(ProxyServer proxyServer, CleanPing plugin) {
         LiteralCommandNode<CommandSource> node = LiteralArgumentBuilder.<CommandSource>literal("cleanping")
-                .requires(src -> src instanceof Player && src.hasPermission(VelocityConfig.PING_PERMISSION.get(String.class)))
+                .requires(src -> src.hasPermission(VelocityConfig.PING_PERMISSION.get(String.class)))
                 .executes(ctx -> {
+
+                    if (!(ctx.getSource() instanceof Player)) {
+                        ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
+                                .deserialize(VelocityMessages.USAGE.color()
+                                        .replace("%prefix%", VelocityMessages.PREFIX.color())
+                                ));
+                        return Command.SINGLE_SUCCESS;
+                    }
+
                     final Player player = (Player) ctx.getSource();
                     final long ping = player.getPing();
 
@@ -69,7 +78,6 @@ public final class PingCommand  {
 
                         })
                         .executes(ctx -> {
-                            final Player player = (Player) ctx.getSource();
                             final String argument = StringArgumentType.getString(ctx, "player");
 
                             if (VelocityRedis.REDIS.get(Boolean.class) && proxyServer.getPluginManager().isLoaded("redisbungee")) {
@@ -81,7 +89,7 @@ public final class PingCommand  {
                                 }
 
                                 if (!redisBungeeAPI.isPlayerOnline(uuid)) {
-                                    player.sendMessage(LegacyComponentSerializer.legacy('§')
+                                    ctx.getSource().sendMessage(LegacyComponentSerializer.legacy('§')
                                             .deserialize(VelocityMessages.NOT_ONLINE.color()
                                                     .replace("%prefix%", VelocityMessages.PREFIX.color())
                                                     .replace("%user%", argument)
@@ -90,6 +98,11 @@ public final class PingCommand  {
                                     return Command.SINGLE_SUCCESS;
                                 }
 
+                                if (!(ctx.getSource() instanceof Player)) {
+                                    return Command.SINGLE_SUCCESS;
+                                }
+
+                                final Player player = (Player) ctx.getSource();
                                 final String send_message = argument + ";" + uuid + ";" + redisBungeeAPI.getProxy(uuid) + ";" + player.getUniqueId();
                                 redisBungeeAPI.sendChannelMessage("CleanPing-Request", send_message);
                                 return Command.SINGLE_SUCCESS;
@@ -100,7 +113,7 @@ public final class PingCommand  {
                                 final Player target = optionalTarget.get();
 
                                 if (!(VelocityConfig.OTHERS_PING_OPTION.get(Boolean.class))) {
-                                    player.sendMessage(LegacyComponentSerializer.legacySection()
+                                    ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
                                             .deserialize(VelocityMessages.USAGE.color()
                                                     .replace("%prefix%", VelocityMessages.PREFIX.color())
                                             ));
@@ -111,7 +124,7 @@ public final class PingCommand  {
                                 final long ping = target.getPing();
 
                                 if (!(VelocityConfig.DYNAMIC_PING.get(Boolean.class))) {
-                                    player.sendMessage(LegacyComponentSerializer.legacySection()
+                                    ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
                                             .deserialize(VelocityMessages.OTHERS_PING.color()
                                                     .replace("%prefix%", VelocityMessages.PREFIX.color())
                                                     .replace("%user%", argument)
@@ -123,14 +136,14 @@ public final class PingCommand  {
 
                                 final String color = colorBasedOnPing(ping);
 
-                                player.sendMessage(LegacyComponentSerializer.legacySection()
+                                ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
                                         .deserialize(VelocityMessages.OTHERS_PING.color()
                                                 .replace("%prefix%", VelocityMessages.PREFIX.color())
                                                 .replace("%user%", argument)
                                                 .replace("%ping%", color + target.getPing())
                                         ));
                             } else {
-                                player.sendMessage(LegacyComponentSerializer.legacySection()
+                                ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
                                         .deserialize(VelocityMessages.NOT_ONLINE.color()
                                                 .replace("%prefix%", VelocityMessages.PREFIX.color())
                                                 .replace("%user%", argument)
