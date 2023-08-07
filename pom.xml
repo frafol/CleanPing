@@ -6,7 +6,7 @@
 
     <groupId>it.frafol</groupId>
     <artifactId>cleanping</artifactId>
-    <version>1.4.4</version>
+    <version>1.4.5</version>
     <packaging>jar</packaging>
 
     <name>CleanPing</name>
@@ -141,13 +141,13 @@
         <dependency>
             <groupId>com.github.proxiodev.redisbungee</groupId>
             <artifactId>RedisBungee-Bungee</artifactId>
-            <version>0.11.2</version>
+            <version>0.11.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.proxiodev.redisbungee</groupId>
             <artifactId>RedisBungee-Velocity</artifactId>
-            <version>0.11.2</version>
+            <version>0.11.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

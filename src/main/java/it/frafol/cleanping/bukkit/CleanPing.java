@@ -88,17 +88,11 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 		if (Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_6_R")
 				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_5_R")
 				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_4_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_3_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_2_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_1_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_0_R")) {
+				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_3_R")) {
+
 			getLogger().severe("Support for your version was declined.");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
-		}
-
-		if (isFolia()) {
-			getLogger().warning("Support for Folia has not been tested and is only for experimental purposes.");
 		}
 
 		getLogger().info("Loading configuration...");
@@ -127,18 +121,9 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 
 		}
 
-		getLogger().info("Loading commands...");
+		if (!hasGetPingMethod()) {
 
-		if (Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_7_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_8_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_9_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_10_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_11_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_12_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_13_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_14_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_15_R")) {
-
+			getLogger().info("Loading commands for legacy versions...");
 			Objects.requireNonNull(getCommand("ping")).setExecutor(new it.frafol.cleanping.bukkit.commands.legacy.PingCommand(this));
 			Objects.requireNonNull(getCommand("ping")).setTabCompleter(this);
 			Objects.requireNonNull(getCommand("cleanping")).setExecutor(new it.frafol.cleanping.bukkit.commands.legacy.PingCommand(this));
@@ -148,6 +133,7 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 
 		} else {
 
+			getLogger().info("Loading commands...");
 			Objects.requireNonNull(getCommand("ping")).setExecutor(new PingCommand(this));
 			Objects.requireNonNull(getCommand("ping")).setTabCompleter(this);
 			Objects.requireNonNull(getCommand("cleanping")).setExecutor(new PingCommand(this));
@@ -161,50 +147,33 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 		Objects.requireNonNull(getCommand("cleanping")).setTabCompleter(new TabComplete());
 
 		if (SpigotConfig.STATS.get(Boolean.class)) {
-
 			new Metrics(this, 16505);
-
 			getLogger().info("Metrics loaded successfully!");
-
 		}
 
-		if (!isFolia()) {
-			if (SpigotConfig.UPDATE_CHECK.get(Boolean.class)) {
-				new UpdateCheck(this).getVersion(version -> {
+		if (SpigotConfig.UPDATE_CHECK.get(Boolean.class)) {
+			new UpdateCheck(this).getVersion(version -> {
 
-					if (Integer.parseInt(getDescription().getVersion().replace(".", "")) < Integer.parseInt(version.replace(".", ""))) {
+				if (Integer.parseInt(getDescription().getVersion().replace(".", "")) < Integer.parseInt(version.replace(".", ""))) {
 
-						if (SpigotConfig.AUTO_UPDATE.get(Boolean.class) && !updated) {
-							autoUpdate();
-							return;
-						}
-
-						if (!updated) {
-							getLogger().warning("§eThere is a new update available, download it on SpigotMC!");
-						}
+					if (SpigotConfig.AUTO_UPDATE.get(Boolean.class) && !updated) {
+						autoUpdate();
+						return;
 					}
 
-					if (Integer.parseInt(getDescription().getVersion().replace(".", "")) > Integer.parseInt(version.replace(".", ""))) {
-						getLogger().warning("§eYou are using a development version, please report any bugs!");
+					if (!updated) {
+						getLogger().warning("§eThere is a new update available, download it on SpigotMC!");
 					}
+				}
 
-				});
-			}
-		} else {
-			getLogger().severe("Folia does not support the update checker.");
+				if (Integer.parseInt(getDescription().getVersion().replace(".", "")) > Integer.parseInt(version.replace(".", ""))) {
+					getLogger().warning("§eYou are using a development version, please report any bugs!");
+				}
+
+			});
 		}
-
 
 		getLogger().info("Plugin successfully loaded!");
-	}
-
-	public static boolean isFolia() {
-		try {
-			Class.forName("io.papermc.paper.threadedregions.RegionizedServerInitEvent");
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
-		return true;
 	}
 
 	public YamlFile getConfigTextFile() {
@@ -217,6 +186,15 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 
 	public YamlFile getVersionTextFile() {
 		return getInstance().versionTextFile.getConfig();
+	}
+
+	public static boolean hasGetPingMethod() {
+		try {
+			Player.class.getDeclaredMethod("getPing");
+			return true;
+		} catch (NoSuchMethodException e) {
+			return false;
+		}
 	}
 
 	@SneakyThrows
