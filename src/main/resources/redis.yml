@@ -5,9 +5,9 @@
 #                                   |___/
 #
 # RedisBungee file. Made with ❤ by frafol.
-# For support: discord.io/futuredevelopment
+# For support: https://discord.com/invite/sTSwaGBCdC
 
-# NOTE: This feature is in alpha, report all errors on discord.io/futuredevelopment.
+# NOTE: This feature is in alpha, report all errors on https://discord.com/invite/sTSwaGBCdC.
 redis:
   # Toggle RedisBungee Hook (Compatible with BungeeCord and Velocity)
   enabled: false
