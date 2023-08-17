@@ -36,7 +36,7 @@ import java.nio.file.StandardCopyOption;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.4.5",
+		version = "1.4.6",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
