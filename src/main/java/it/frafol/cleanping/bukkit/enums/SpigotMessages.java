@@ -16,6 +16,7 @@ public enum SpigotMessages {
 
     PING("messages.ping"),
     OTHERS_PING("messages.others_ping"),
+    PING_DIFFERENCE("messages.difference_ping"),
 
     RELOADED("messages.reloaded");
 

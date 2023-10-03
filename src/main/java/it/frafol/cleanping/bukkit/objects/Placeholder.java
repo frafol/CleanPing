@@ -1,9 +1,6 @@
 package it.frafol.cleanping.bukkit.objects;
 
 import lombok.Getter;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,23 +12,33 @@ public class Placeholder { private final String key;private final String value;
         this.key = "%" + key + "%";this.value = value;
     }
 
-    public static @NotNull String translate(String message) {
+    public static String translate(String message) {
 
-        if (Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_16_R")
-                || Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_17_R")
-                || Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_18_R")
-                || Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_19_R")) {
-
-            Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
-            Matcher matcher = pattern.matcher(message);
-
-            while (matcher.find()) {
-                String color = message.substring(matcher.start(), matcher.end());
-                message = message.replace(color, ChatColor.of(color) + "");
-                matcher = pattern.matcher(message);
-            }
+        if (!containsHexColor(message)) {
+            return message.replace("&", "§");
         }
 
-        return ChatColor.translateAlternateColorCodes('&', message);
+        Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+        Matcher matcher = pattern.matcher(message);
+        while (matcher.find()) {
+            String hexCode = message.substring(matcher.start(), matcher.end());
+            String replaceSharp = hexCode.replace('#', 'x');
+
+            char[] ch = replaceSharp.toCharArray();
+            StringBuilder builder = new StringBuilder();
+            for (char c : ch) {
+                builder.append("&").append(c);
+            }
+
+            message = message.replace(hexCode, builder.toString());
+            matcher = pattern.matcher(message);
+        }
+
+        return message.replace("&", "§");
+    }
+
+    private static boolean containsHexColor(String message) {
+        String hexColorPattern = "(?i)&#[a-f0-9]{6}";
+        return message.matches(".*" + hexColorPattern + ".*");
     }
 }

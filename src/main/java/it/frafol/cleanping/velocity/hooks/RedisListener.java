@@ -82,30 +82,20 @@ public class RedisListener {
                 return;
 
             }
+            PLUGIN.getServer().getPlayer(source).get().sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
+                    .replace("%prefix%", VelocityMessages.PREFIX.color())
+                    .replace("%user%", player_name)
+                    .replace("%ping%", colorBasedOnPing(ping) + ping)));
+        }
+    }
 
-            if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
-
-                PLUGIN.getServer().getPlayer(source).get().sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
-                        .replace("%prefix%", VelocityMessages.PREFIX.color())
-                        .replace("%user%", player_name)
-                        .replace("%ping%", VelocityConfig.LOW_MS_COLOR.color() + ping)));
-
-            } else if (ping > VelocityConfig.MEDIUM_MS.get(Integer.class)
-                    && ping < VelocityConfig.HIGH_MS.get(Integer.class)) {
-
-                PLUGIN.getServer().getPlayer(source).get().sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
-                        .replace("%prefix%", VelocityMessages.PREFIX.color())
-                        .replace("%user%", player_name)
-                        .replace("%ping%", VelocityConfig.MEDIUM_MS_COLOR.color() + ping)));
-
-            } else {
-
-                PLUGIN.getServer().getPlayer(source).get().sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.OTHERS_PING.color()
-                        .replace("%prefix%", VelocityMessages.PREFIX.color())
-                        .replace("%user%", player_name)
-                        .replace("%ping%", VelocityConfig.HIGH_MS_COLOR.color() + ping)));
-
-            }
+    private static String colorBasedOnPing(long ping) {
+        if (ping < VelocityConfig.MEDIUM_MS.get(Integer.class)) {
+            return VelocityConfig.LOW_MS_COLOR.color();
+        } else if (ping > VelocityConfig.MEDIUM_MS.get(Integer.class) && ping < VelocityConfig.HIGH_MS.get(Integer.class)) {
+            return VelocityConfig.MEDIUM_MS_COLOR.color();
+        } else {
+            return VelocityConfig.HIGH_MS_COLOR.color();
         }
     }
 }

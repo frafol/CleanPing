@@ -14,6 +14,10 @@ settings:
   # Enable others ping command. (/ping {username})
   others_ping_enabled: true
 
+  # Enable difference ping command. (/ping {username1} {username2})
+  # NOTE: This feature is not compatible with RedisBungee.
+  difference_ping_enabled: true
+
   update_check: true
   auto_update: true
   stats: true
@@ -31,4 +35,5 @@ permissions:
 
   ping: cleanping.ping
   others_ping: cleanping.ping.others
+  difference_ping: cleanping.ping.difference
   reload: cleanping.reload

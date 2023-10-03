@@ -7,6 +7,7 @@ import it.frafol.cleanping.bukkit.commands.utils.TabComplete;
 import it.frafol.cleanping.bukkit.enums.SpigotConfig;
 import it.frafol.cleanping.bukkit.enums.SpigotVersion;
 import it.frafol.cleanping.bukkit.objects.TextFile;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
@@ -37,15 +38,12 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 	private TextFile configTextFile;
 	private TextFile messagesTextFile;
 	private TextFile versionTextFile;
+
+	@Getter
 	public static CleanPing instance;
 
 	boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-
 	public boolean updated = false;
-
-	public static CleanPing getInstance() {
-		return instance;
-	}
 
 	@SneakyThrows
 	@Override
@@ -85,13 +83,13 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 				"                                   |___/ \n");
 
 		getLogger().info("Server version: " + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + ".");
-		if (Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_6_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_5_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_4_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_3_R")) {
+		if (getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_6_R")
+				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_5_R")
+				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_4_R")
+				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_3_R")) {
 
 			getLogger().severe("Support for your version was declined.");
-			Bukkit.getPluginManager().disablePlugin(this);
+			getInstance().getPluginLoader().disablePlugin(this);
 			return;
 		}
 
@@ -109,8 +107,7 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 				ConfigUpdater.update(this, "config.yml", configFile, Collections.emptyList());
 				ConfigUpdater.update(this, "messages.yml", messagesFile, Collections.emptyList());
 			} catch (IOException exception) {
-				getLogger().severe("Unable to update configuration file, see the error below:");
-				exception.printStackTrace();
+				getLogger().severe("Unable to update configuration file, please update it manually.");
 			}
 
 			versionTextFile.getConfig().set("version", getDescription().getVersion());
@@ -198,8 +195,8 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 	}
 
 	@SneakyThrows
-	public static int getPing(Player player) {
-		String v = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+	public int getPing(Player player) {
+		String v = getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
 		try {
 			Class<?> CraftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer");
 			Object CraftPlayer = CraftPlayerClass.cast(player);
@@ -207,9 +204,10 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 			Object EntityPlayer = getHandle.invoke(CraftPlayer);
 			Field ping = EntityPlayer.getClass().getDeclaredField("ping");
 			return ping.getInt(EntityPlayer);
-		} catch (Exception exception) {
-			exception.printStackTrace();
+		} catch (Exception ignored) {
+			getLogger().severe("Unable to get a player's ping, please report this error on the Discord Server.");
 		}
+
 		return 0;
 	}
 

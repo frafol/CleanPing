@@ -20,5 +20,6 @@ messages:
 
   ping: "%prefix% &7Your latency is: &d%ping% ms"
   others_ping: "%prefix% &d%user%&7's latency: %ping% ms"
+  difference_ping: "%prefix% &7The difference between latency of %arg1% and &d%arg2%&7 is: &d%difference% ms&7."
 
   reloaded: "%prefix% &7Configuration reloaded &dsuccessfully&7."

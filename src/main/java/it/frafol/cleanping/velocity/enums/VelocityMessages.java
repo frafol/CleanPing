@@ -9,10 +9,14 @@ public enum VelocityMessages {
 
     USAGE("messages.usage"),
 
+    ONLY_PLAYERS("messages.only_players"),
     NOT_ONLINE("messages.not_online"),
+
+    NO_PERMISSION("messages.no_permission"),
 
     PING("messages.ping"),
     OTHERS_PING("messages.others_ping"),
+    PING_DIFFERENCE("messages.difference_ping"),
 
     RELOADED("messages.reloaded");
 

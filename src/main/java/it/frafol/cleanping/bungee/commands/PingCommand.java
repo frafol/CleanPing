@@ -20,11 +20,8 @@ import java.util.UUID;
 public class PingCommand extends Command implements TabExecutor {
 
 	public PingCommand() {
-
 		super("cleanping","","ping");
-
 	}
-
 
 	@Override
 	public void execute(CommandSender source, String[] args) {
@@ -45,26 +42,13 @@ public class PingCommand extends Command implements TabExecutor {
 				if (!(BungeeConfig.DYNAMIC_PING.get(Boolean.class))) {
 					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
-							.replace("%ping%", String.valueOf(player.getPing()))));
+							.replace("%ping%", String.valueOf(ping))));
 					return;
 				}
 
-				if (ping < BungeeConfig.MEDIUM_MS.get(Integer.class)) {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
-							.replace("%prefix%", BungeeMessages.PREFIX.color())
-							.replace("%ping%", BungeeConfig.LOW_MS_COLOR.color() + player.getPing())));
-
-				} else if (ping > BungeeConfig.MEDIUM_MS.get(Integer.class)
-						&& ping < BungeeConfig.HIGH_MS.get(Integer.class)) {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
-							.replace("%prefix%", BungeeMessages.PREFIX.color())
-							.replace("%ping%", BungeeConfig.MEDIUM_MS_COLOR.color() + player.getPing())));
-
-				} else {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
-							.replace("%prefix%", BungeeMessages.PREFIX.color())
-							.replace("%ping%", BungeeConfig.HIGH_MS_COLOR.color() + player.getPing())));
-				}
+				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
+						.replace("%prefix%", BungeeMessages.PREFIX.color())
+						.replace("%ping%", colorBasedOnPing(ping) + ping)));
 
 			} else {
 				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NO_PERMISSION.color()
@@ -98,36 +82,18 @@ public class PingCommand extends Command implements TabExecutor {
 				final long ping = ProxyServer.getInstance().getPlayer(args[0]).getPing();
 
 				if (!(BungeeConfig.DYNAMIC_PING.get(Boolean.class))) {
-
 					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
 							.replace("%user%", (args[0]))
-							.replace("%ping%", String.valueOf(ProxyServer.getInstance().getPlayer(args[0]).getPing()))));
+							.replace("%ping%", String.valueOf(ping))));
 					return;
 				}
 
-				if (ping < BungeeConfig.MEDIUM_MS.get(Integer.class)) {
+				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
+						.replace("%prefix%", BungeeMessages.PREFIX.color())
+						.replace("%user%", (args[0]))
+						.replace("%ping%", colorBasedOnPing(ping) + ping)));
 
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
-							.replace("%prefix%", BungeeMessages.PREFIX.color())
-							.replace("%user%", (args[0]))
-							.replace("%ping%", BungeeConfig.LOW_MS_COLOR.color() + ProxyServer.getInstance().getPlayer(args[0]).getPing())));
-
-				} else if (ping > BungeeConfig.MEDIUM_MS.get(Integer.class)
-						&& ping < BungeeConfig.HIGH_MS.get(Integer.class)) {
-
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
-							.replace("%prefix%", BungeeMessages.PREFIX.color())
-							.replace("%user%", (args[0]))
-							.replace("%ping%", BungeeConfig.MEDIUM_MS_COLOR.color() + ProxyServer.getInstance().getPlayer(args[0]).getPing())));
-
-				} else {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
-							.replace("%prefix%", BungeeMessages.PREFIX.color())
-							.replace("%user%", (args[0]))
-							.replace("%ping%", BungeeConfig.HIGH_MS_COLOR.color() + ProxyServer.getInstance().getPlayer(args[0]).getPing())));
-				}
-				
 			} else {
 
 				if (!source.hasPermission(BungeeConfig.PING_OTHERS_PERMISSION.get(String.class))) {
@@ -159,9 +125,44 @@ public class PingCommand extends Command implements TabExecutor {
 				final ProxiedPlayer player = (ProxiedPlayer) source;
 				final String send_message = target + ";" + uuid + ";" + redisBungeeAPI.getProxy(uuid) + ";" + player.getUniqueId();
 				redisBungeeAPI.sendChannelMessage("CleanPing-Request", send_message);
-
 			}
 
+		} else if (args.length == 2) {
+
+			if (!source.hasPermission(BungeeConfig.DIFFERENCE_PING_PERMISSION.get(String.class))) {
+				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NO_PERMISSION.color()
+						.replace("%prefix%", BungeeMessages.PREFIX.color())));
+				return;
+			}
+
+			if (ProxyServer.getInstance().getPlayer(args[0]) == null) {
+				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NOT_ONLINE.color()
+						.replace("%prefix%", BungeeMessages.PREFIX.color())
+						.replace("%user%", (args[0]))));
+				return;
+			}
+
+			if (ProxyServer.getInstance().getPlayer(args[1]) == null) {
+				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NOT_ONLINE.color()
+						.replace("%prefix%", BungeeMessages.PREFIX.color())
+						.replace("%user%", (args[0]))));
+				return;
+			}
+
+			if (!(BungeeConfig.DIFFERENCE_PING_OPTION.get(Boolean.class))) {
+				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.USAGE.color()
+						.replace("%prefix%", BungeeMessages.PREFIX.color())));
+				return;
+			}
+
+			final long ping1 = ProxyServer.getInstance().getPlayer(args[0]).getPing();
+			final long ping2 = ProxyServer.getInstance().getPlayer(args[1]).getPing();
+
+			source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING_DIFFERENCE.color()
+					.replace("%prefix%", BungeeMessages.PREFIX.color())
+					.replace("%arg1%", (args[0]))
+					.replace("%arg2%", (args[1]))
+					.replace("%difference%", getDifference(ping1, ping2).toString())));
 		} else {
 			source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.USAGE.color()
 					.replace("%prefix%", BungeeMessages.PREFIX.color())));
@@ -186,5 +187,22 @@ public class PingCommand extends Command implements TabExecutor {
 		}
 
 		return completions;
+	}
+
+	private static String colorBasedOnPing(long ping) {
+		if (ping < BungeeConfig.MEDIUM_MS.get(Integer.class)) {
+			return BungeeConfig.LOW_MS_COLOR.color();
+		} else if (ping > BungeeConfig.MEDIUM_MS.get(Integer.class) && ping < BungeeConfig.HIGH_MS.get(Integer.class)) {
+			return BungeeConfig.MEDIUM_MS_COLOR.color();
+		} else {
+			return BungeeConfig.HIGH_MS_COLOR.color();
+		}
+	}
+
+	private Integer getDifference(long ping1, long ping2) {
+		if (ping1 > ping2) {
+			return (int) Math.abs(ping1 - ping2);
+		}
+		return (int) Math.abs(ping2 - ping1);
 	}
 }

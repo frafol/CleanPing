@@ -1,12 +1,14 @@
 package it.frafol.cleanping.bukkit.enums;
 
 import it.frafol.cleanping.bukkit.CleanPing;
+import it.frafol.cleanping.bukkit.objects.Placeholder;
 import org.jetbrains.annotations.NotNull;
 
 public enum SpigotConfig {
 
     PING_PERMISSION("permissions.ping"),
     PING_OTHERS_PERMISSION("permissions.others_ping"),
+    DIFFERENCE_PING_PERMISSION("permissions.difference_ping"),
     RELOAD_PERMISSION("permissions.reload"),
     UPDATE_CHECK("settings.update_check"),
     AUTO_UPDATE("settings.auto_update"),
@@ -19,6 +21,7 @@ public enum SpigotConfig {
     HIGH_MS("dynamic.high_ms"),
 
     OTHERS_PING_OPTION("settings.others_ping_enabled"),
+    DIFFERENCE_PING_OPTION("settings.difference_ping_enabled"),
 
     STATS("settings.stats"),
 
@@ -32,7 +35,7 @@ public enum SpigotConfig {
     }
 
     public @NotNull String color() {
-        return get(String.class).replace("&", "§");
+        return Placeholder.translate(get(String.class)).replace("&", "§");
     }
 
     public <T> T get(@NotNull Class<T> clazz) {

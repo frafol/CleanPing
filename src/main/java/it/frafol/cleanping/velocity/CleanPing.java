@@ -36,7 +36,7 @@ import java.nio.file.StandardCopyOption;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.4.6",
+		version = "1.5.0",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
@@ -54,13 +54,11 @@ public class CleanPing {
 	private TextFile configTextFile;
 	private TextFile redisTextFile;
 	private TextFile versionTextFile;
+
+	@Getter
 	private static CleanPing instance;
 
 	public boolean updated = false;
-
-	public static CleanPing getInstance() {
-		return instance;
-	}
 
 	@Inject
 	public CleanPing(Logger logger, ProxyServer server, @DataDirectory Path path, Metrics.Factory metricsFactory) {

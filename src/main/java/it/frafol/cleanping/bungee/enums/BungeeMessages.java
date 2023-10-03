@@ -1,7 +1,11 @@
 package it.frafol.cleanping.bungee.enums;
 
 import it.frafol.cleanping.bungee.CleanPing;
+import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum BungeeMessages {
 
@@ -16,6 +20,7 @@ public enum BungeeMessages {
 
     PING("messages.ping"),
     OTHERS_PING("messages.others_ping"),
+    PING_DIFFERENCE("messages.difference_ping"),
 
     RELOADED("messages.reloaded");
 
@@ -30,8 +35,26 @@ public enum BungeeMessages {
         return clazz.cast(instance.getMessagesTextFile().get(path));
     }
 
-    public @NotNull String color() {
-        return get(String.class).replace("&", "§");
+    public String color() {
+        String hex = convertHexColors(get(String.class));
+        return hex.replace("&", "§");
     }
 
+    public static String convertHexColors(String str) {
+        Pattern unicode = Pattern.compile("\\\\u\\+[a-fA-F0-9]{4}");
+        Matcher match = unicode.matcher(str);
+        while (match.find()) {
+            String code = str.substring(match.start(),match.end());
+            str = str.replace(code,Character.toString((char) Integer.parseInt(code.replace("\\u+",""),16)));
+            match = unicode.matcher(str);
+        }
+        Pattern pattern = Pattern.compile("&#[a-fA-F0-9]{6}");
+        match = pattern.matcher(str);
+        while (match.find()) {
+            String color = str.substring(match.start(),match.end());
+            str = str.replace(color, ChatColor.of(color.replace("&","")) + "");
+            match = pattern.matcher(str);
+        }
+        return ChatColor.translateAlternateColorCodes('&',str);
+    }
 }

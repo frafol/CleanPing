@@ -8,6 +8,7 @@ import it.frafol.cleanping.bungee.enums.BungeeRedis;
 import it.frafol.cleanping.bungee.enums.BungeeVersion;
 import it.frafol.cleanping.bungee.hooks.RedisListener;
 import it.frafol.cleanping.bungee.objects.TextFile;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import net.byteflux.libby.BungeeLibraryManager;
 import net.byteflux.libby.Library;
@@ -28,15 +29,12 @@ public class CleanPing extends Plugin {
 	private TextFile messagesTextFile;
 	private TextFile redisTextFile;
 	private TextFile versionTextFile;
+
+	@Getter
 	public static CleanPing instance;
 
 	boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-
 	public boolean updated = false;
-
-	public static CleanPing getInstance() {
-		return instance;
-	}
 
 	@Override
 	public void onEnable() {

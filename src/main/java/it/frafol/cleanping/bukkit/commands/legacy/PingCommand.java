@@ -3,6 +3,7 @@ package it.frafol.cleanping.bukkit.commands.legacy;
 import it.frafol.cleanping.bukkit.CleanPing;
 import it.frafol.cleanping.bukkit.enums.SpigotConfig;
 import it.frafol.cleanping.bukkit.enums.SpigotMessages;
+import it.frafol.cleanping.bukkit.objects.Placeholder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,9 +15,7 @@ public class PingCommand implements CommandExecutor {
 	public final CleanPing plugin;
 
 	public PingCommand(CleanPing plugin) {
-
 		this.plugin = plugin;
-
 	}
 
 	@Override
@@ -31,7 +30,7 @@ public class PingCommand implements CommandExecutor {
 			}
 
 			final Player player = (Player) source;
-			final long ping = CleanPing.getPing(player);
+			final long ping = plugin.getPing(player);
 
 			if (source.hasPermission(SpigotConfig.PING_PERMISSION.get(String.class))) {
 
@@ -42,22 +41,9 @@ public class PingCommand implements CommandExecutor {
 					return false;
 				}
 
-				if (ping < SpigotConfig.MEDIUM_MS.get(Integer.class)) {
-					source.sendMessage(SpigotMessages.PING.color()
-							.replace("%prefix%", SpigotMessages.PREFIX.color())
-							.replace("%ping%", SpigotConfig.LOW_MS_COLOR.color() + ping));
-
-				} else if (ping > SpigotConfig.MEDIUM_MS.get(Integer.class)
-						&& ping < SpigotConfig.HIGH_MS.get(Integer.class)) {
-					source.sendMessage(SpigotMessages.PING.color()
-							.replace("%prefix%", SpigotMessages.PREFIX.color())
-							.replace("%ping%", SpigotConfig.MEDIUM_MS_COLOR.color() + ping));
-
-				} else {
-					source.sendMessage(SpigotMessages.PING.color()
-							.replace("%prefix%", SpigotMessages.PREFIX.color())
-							.replace("%ping%", SpigotConfig.HIGH_MS_COLOR.color() + ping));
-				}
+				source.sendMessage(SpigotMessages.PING.color()
+						.replace("%prefix%", SpigotMessages.PREFIX.color())
+						.replace("%ping%", colorBasedOnPing(ping) + ping));
 
 			} else {
 				source.sendMessage(SpigotMessages.NO_PERMISSION.color()
@@ -85,35 +71,59 @@ public class PingCommand implements CommandExecutor {
 				return false;
 			}
 
-			final long ping = CleanPing.getPing(plugin.getServer().getPlayer(args[0]));
+			final long ping = plugin.getPing(plugin.getServer().getPlayer(args[0]));
 
 			if (!(SpigotConfig.DYNAMIC_PING.get(Boolean.class))) {
 				source.sendMessage(SpigotMessages.OTHERS_PING.color()
 						.replace("%prefix%", SpigotMessages.PREFIX.color())
 						.replace("%user%", (args[0]))
-						.replace("%ping%", String.valueOf(CleanPing.getPing(plugin.getServer().getPlayer(args[0])))));
+						.replace("%ping%", String.valueOf(ping)));
 				return false;
 			}
 
-			if (ping < SpigotConfig.MEDIUM_MS.get(Integer.class)) {
-				source.sendMessage(SpigotMessages.OTHERS_PING.color()
-						.replace("%prefix%", SpigotMessages.PREFIX.color())
-						.replace("%user%", (args[0]))
-						.replace("%ping%", SpigotConfig.LOW_MS_COLOR.color() + CleanPing.getPing(plugin.getServer().getPlayer(args[0]))));
+			source.sendMessage(SpigotMessages.OTHERS_PING.color()
+					.replace("%prefix%", SpigotMessages.PREFIX.color())
+					.replace("%user%", (args[0]))
+					.replace("%ping%", colorBasedOnPing(ping) + ping));
 
-			} else if (ping > SpigotConfig.MEDIUM_MS.get(Integer.class)
-					&& ping < SpigotConfig.HIGH_MS.get(Integer.class)) {
-				source.sendMessage(SpigotMessages.OTHERS_PING.color()
-						.replace("%prefix%", SpigotMessages.PREFIX.color())
-						.replace("%user%", (args[0]))
-						.replace("%ping%", SpigotConfig.MEDIUM_MS_COLOR.color() + CleanPing.getPing(plugin.getServer().getPlayer(args[0]))));
+		} else if (args.length == 2) {
 
-			} else {
-				source.sendMessage(SpigotMessages.OTHERS_PING.color()
-						.replace("%prefix%", SpigotMessages.PREFIX.color())
-						.replace("%user%", (args[0]))
-						.replace("%ping%", SpigotConfig.HIGH_MS_COLOR.color() + CleanPing.getPing(plugin.getServer().getPlayer(args[0]))));
+			if (!source.hasPermission(SpigotConfig.DIFFERENCE_PING_PERMISSION.get(String.class))) {
+				source.sendMessage(SpigotMessages.NO_PERMISSION.color()
+						.replace("%prefix%", Placeholder.translate(SpigotMessages.PREFIX.get(String.class))));
+				return false;
 			}
+
+			if (plugin.getServer().getPlayer(args[0]) == null) {
+				source.sendMessage(SpigotMessages.NOT_ONLINE.color()
+						.replace("%prefix%", Placeholder.translate(SpigotMessages.PREFIX.color()))
+						.replace("%user%", (args[0])));
+				return false;
+			}
+
+			if (plugin.getServer().getPlayer(args[1]) == null) {
+				source.sendMessage(SpigotMessages.NOT_ONLINE.color()
+						.replace("%prefix%", Placeholder.translate(SpigotMessages.PREFIX.get(String.class)))
+						.replace("%user%", (args[0])));
+				return false;
+			}
+
+			if (!(SpigotConfig.DIFFERENCE_PING_OPTION.get(Boolean.class))) {
+				source.sendMessage(SpigotMessages.USAGE.color()
+						.replace("%prefix%", Placeholder.translate(SpigotMessages.PREFIX.color())));
+				return false;
+			}
+
+			final long ping1 = plugin.getPing(plugin.getServer().getPlayer(args[0]));
+			final long ping2 = plugin.getPing(plugin.getServer().getPlayer(args[1]));
+			final long difference = getDifference(ping1, ping2);
+
+			source.sendMessage(Placeholder.translate(SpigotMessages.OTHERS_PING.color())
+					.replace("%prefix%", SpigotMessages.PREFIX.color())
+					.replace("%arg1%", (args[0]))
+					.replace("%arg2%", (args[1]))
+					.replace("%difference%", String.valueOf(difference)));
+			return false;
 
 		} else {
 			source.sendMessage(SpigotMessages.USAGE.color()
@@ -121,5 +131,22 @@ public class PingCommand implements CommandExecutor {
 
 		}
 		return false;
+	}
+
+	private static String colorBasedOnPing(long ping) {
+		if (ping < SpigotConfig.MEDIUM_MS.get(Integer.class)) {
+			return SpigotConfig.LOW_MS_COLOR.color();
+		} else if (ping > SpigotConfig.MEDIUM_MS.get(Integer.class) && ping < SpigotConfig.HIGH_MS.get(Integer.class)) {
+			return SpigotConfig.MEDIUM_MS_COLOR.color();
+		} else {
+			return SpigotConfig.HIGH_MS_COLOR.color();
+		}
+	}
+
+	private Integer getDifference(long ping1, long ping2) {
+		if (ping1 > ping2) {
+			return (int) Math.abs(ping1 - ping2);
+		}
+		return (int) Math.abs(ping2 - ping1);
 	}
 }

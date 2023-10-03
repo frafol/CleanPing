@@ -24,12 +24,19 @@ public final class PingCommand  {
 
     public static void register(ProxyServer proxyServer, CleanPing plugin) {
         LiteralCommandNode<CommandSource> node = LiteralArgumentBuilder.<CommandSource>literal("cleanping")
-                .requires(src -> src.hasPermission(VelocityConfig.PING_PERMISSION.get(String.class)))
                 .executes(ctx -> {
+
+                    if (!ctx.getSource().hasPermission(VelocityConfig.PING_PERMISSION.get(String.class))) {
+                        ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
+                                .deserialize(VelocityMessages.NO_PERMISSION.color()
+                                        .replace("%prefix%", VelocityMessages.PREFIX.color())
+                                ));
+                        return Command.SINGLE_SUCCESS;
+                    }
 
                     if (!(ctx.getSource() instanceof Player)) {
                         ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
-                                .deserialize(VelocityMessages.USAGE.color()
+                                .deserialize(VelocityMessages.ONLY_PLAYERS.color()
                                         .replace("%prefix%", VelocityMessages.PREFIX.color())
                                 ));
                         return Command.SINGLE_SUCCESS;
@@ -47,14 +54,14 @@ public final class PingCommand  {
                             ));
                     return Command.SINGLE_SUCCESS;
                 })
-                .then(RequiredArgumentBuilder.<CommandSource, String>argument("player", StringArgumentType.word())
+                .then(RequiredArgumentBuilder.<CommandSource, String>argument("player1", StringArgumentType.word())
                         .requires(src -> src.hasPermission(VelocityConfig.PING_OTHERS_PERMISSION.get(String.class)))
                         .suggests((ctx, builder) -> {
 
                             String partialName;
 
                             try {
-                                partialName = ctx.getArgument("player", String.class).toLowerCase();
+                                partialName = ctx.getArgument("player1", String.class).toLowerCase();
                             } catch (IllegalArgumentException ignored) {
                                 partialName = "";
                             }
@@ -78,7 +85,8 @@ public final class PingCommand  {
 
                         })
                         .executes(ctx -> {
-                            final String argument = StringArgumentType.getString(ctx, "player");
+
+                            final String argument = StringArgumentType.getString(ctx, "player1");
 
                             if (VelocityRedis.REDIS.get(Boolean.class) && proxyServer.getPluginManager().isLoaded("redisbungee")) {
                                 final RedisBungeeAPI redisBungeeAPI = RedisBungeeAPI.getRedisBungeeApi();
@@ -154,7 +162,82 @@ public final class PingCommand  {
 
                             return Command.SINGLE_SUCCESS;
                         })
-                ).build();
+                        .then(RequiredArgumentBuilder.<CommandSource, String>argument("player2", StringArgumentType.word())
+                                .requires(src -> src.hasPermission(VelocityConfig.DIFFERENCE_PING_PERMISSION.get(String.class)))
+                                .suggests((ctx, builder) -> {
+
+                                    String partialName;
+
+                                    try {
+                                        partialName = ctx.getArgument("player2", String.class).toLowerCase();
+                                    } catch (IllegalArgumentException ignored) {
+                                        partialName = "";
+                                    }
+
+                                    if (partialName.isEmpty()) {
+
+                                        proxyServer.getAllPlayers().stream()
+                                                .map(Player::getUsername)
+                                                .forEach(builder::suggest);
+                                        return builder.buildFuture();
+
+                                    }
+
+                                    String finalPartialName = partialName;
+                                    proxyServer.getAllPlayers().stream()
+                                            .map(Player::getUsername)
+                                            .filter(name -> name.toLowerCase().startsWith(finalPartialName))
+                                            .forEach(builder::suggest);
+
+                                    return builder.buildFuture();
+
+                                })
+                                .executes(ctx -> {
+
+                                    final String argument = StringArgumentType.getString(ctx, "player1");
+                                    final String argument2 = StringArgumentType.getString(ctx, "player2");
+
+                                    final Optional<Player> optionalTarget = proxyServer.getPlayer(argument);
+                                    final Optional<Player> optionalTarget2 = proxyServer.getPlayer(argument2);
+
+                                    if (optionalTarget.isPresent() && optionalTarget2.isPresent()) {
+
+                                        final Player target = optionalTarget.get();
+                                        final Player target2 = optionalTarget2.get();
+
+                                        if (!(VelocityConfig.DIFFERENCE_PING_OPTION.get(Boolean.class))) {
+                                            ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
+                                                    .deserialize(VelocityMessages.USAGE.color()
+                                                            .replace("%prefix%", VelocityMessages.PREFIX.color())
+                                                    ));
+
+                                            return Command.SINGLE_SUCCESS;
+                                        }
+
+                                        final long ping = target.getPing();
+                                        final long ping2 = target2.getPing();
+                                        final long difference = getDifference(ping, ping2);
+
+                                        ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
+                                                .deserialize(VelocityMessages.PING_DIFFERENCE.color()
+                                                        .replace("%prefix%", VelocityMessages.PREFIX.color())
+                                                        .replace("%arg1%", argument)
+                                                        .replace("%arg2%", argument2)
+                                                        .replace("%ping%", Long.toString(difference))
+                                                ));
+
+                                    } else {
+                                        ctx.getSource().sendMessage(LegacyComponentSerializer.legacySection()
+                                                .deserialize(VelocityMessages.NOT_ONLINE.color()
+                                                        .replace("%prefix%", VelocityMessages.PREFIX.color())
+                                                        .replace("%user%", argument)
+                                                ));
+
+                                    }
+
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )).build();
         final BrigadierCommand command = new BrigadierCommand(node);
         final CommandMeta meta = proxyServer.getCommandManager().metaBuilder(command)
                 .aliases("ping").plugin(plugin).build();
@@ -169,5 +252,12 @@ public final class PingCommand  {
         } else {
             return VelocityConfig.HIGH_MS_COLOR.color();
         }
+    }
+
+    private static Integer getDifference(long ping1, long ping2) {
+        if (ping1 > ping2) {
+            return (int) Math.abs(ping1 - ping2);
+        }
+        return (int) Math.abs(ping2 - ping1);
     }
 }

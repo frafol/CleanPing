@@ -25,7 +25,6 @@ public class RedisListener implements Listener {
     public void onRedisBungeeMessage(@NotNull PubSubMessageEvent event) {
 
         final RedisBungeeAPI redisBungeeAPI = RedisBungeeAPI.getRedisBungeeApi();
-
         if (event.getChannel().equals("CleanPing-Request")) {
 
             final String received_message = event.getMessage();
@@ -52,7 +51,6 @@ public class RedisListener implements Listener {
 
             final String response_message = player_name + ";" + player_uuid + ";" + redisBungeeAPI.getProxy(player_uuid) + ";" + source + ";" + ping;
             redisBungeeAPI.sendChannelMessage("CleanPing-Response", response_message);
-
         }
 
         if (event.getChannel().equals("CleanPing-Response")) {
@@ -72,39 +70,27 @@ public class RedisListener implements Listener {
             }
 
             if (!(BungeeConfig.DYNAMIC_PING.get(Boolean.class))) {
-
                 PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
                         .replace("%prefix%", BungeeMessages.PREFIX.color())
                         .replace("%user%", player_name)
                         .replace("%ping%", String.valueOf(ping))));
-
                 return;
-
             }
 
-            if (ping < BungeeConfig.MEDIUM_MS.get(Integer.class)) {
+            PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
+                    .replace("%prefix%", BungeeMessages.PREFIX.color())
+                    .replace("%user%", player_name)
+                    .replace("%ping%", colorBasedOnPing(ping) + ping)));
+        }
+    }
 
-                PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
-                        .replace("%prefix%", BungeeMessages.PREFIX.color())
-                        .replace("%user%", player_name)
-                        .replace("%ping%", BungeeConfig.LOW_MS_COLOR.color() + ping)));
-
-            } else if (ping > BungeeConfig.MEDIUM_MS.get(Integer.class)
-                    && ping < BungeeConfig.HIGH_MS.get(Integer.class)) {
-
-                PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
-                        .replace("%prefix%", BungeeMessages.PREFIX.color())
-                        .replace("%user%", player_name)
-                        .replace("%ping%", BungeeConfig.MEDIUM_MS_COLOR.color() + ping)));
-
-            } else {
-
-                PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
-                        .replace("%prefix%", BungeeMessages.PREFIX.color())
-                        .replace("%user%", player_name)
-                        .replace("%ping%", BungeeConfig.HIGH_MS_COLOR.color() + ping)));
-
-            }
+    private static String colorBasedOnPing(long ping) {
+        if (ping < BungeeConfig.MEDIUM_MS.get(Integer.class)) {
+            return BungeeConfig.LOW_MS_COLOR.color();
+        } else if (ping > BungeeConfig.MEDIUM_MS.get(Integer.class) && ping < BungeeConfig.HIGH_MS.get(Integer.class)) {
+            return BungeeConfig.MEDIUM_MS_COLOR.color();
+        } else {
+            return BungeeConfig.HIGH_MS_COLOR.color();
         }
     }
 }
