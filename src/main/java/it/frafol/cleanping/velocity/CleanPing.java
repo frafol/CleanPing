@@ -21,8 +21,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.VelocityLibraryManager;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.slf4j.Logger;
 import ru.vyarus.yaml.updater.YamlUpdater;
 import ru.vyarus.yaml.updater.util.FileUtils;
@@ -201,7 +199,7 @@ public class CleanPing {
 	private void updateConfig() {
 		if (container.getDescription().getVersion().isPresent() && (!container.getDescription().getVersion().get().equals(VelocityVersion.VERSION.get(String.class)))) {
 
-			logger.info(Component.text("Creating new configurations...").color(NamedTextColor.LIGHT_PURPLE).content());
+			logger.info("Creating new configurations...");
 			YamlUpdater.create(new File(path + "/config.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/config.yml"))
 					.backup(true)
 					.update();
