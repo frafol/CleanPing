@@ -21,6 +21,8 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.VelocityLibraryManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.slf4j.Logger;
 import ru.vyarus.yaml.updater.YamlUpdater;
 import ru.vyarus.yaml.updater.util.FileUtils;
@@ -36,7 +38,7 @@ import java.nio.file.StandardCopyOption;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.5.0",
+		version = "1.5.1",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
@@ -109,38 +111,31 @@ public class CleanPing {
 
 		velocityLibraryManager.loadLibrary(yaml);
 
-		logger.info("\n§d   ___ _                 ___ _           \n" +
+		logger.info("\n   ___ _                 ___ _           \n" +
 				"  / __| |___ __ _ _ _   | _ (_)_ _  __ _ \n" +
 				" | (__| / -_) _` | ' \\  |  _/ | ' \\/ _` |\n" +
 				"  \\___|_\\___\\__,_|_||_| |_| |_|_||_\\__, |\n" +
 				"                                   |___/ \n");
 
-		logger.info("§7Loading §dconfiguration§7...");
+		logger.info("Loading configuration...");
 		loadFiles();
 		updateConfig();
 
-		logger.info("§7Loading §dcommands§7...");
+		logger.info("Loading commands...");
 		PingCommand.register(server, this);
 		ReloadCommand.register(server, this);
 
 		if (VelocityConfig.STATS.get(Boolean.class)) {
-
 			metricsFactory.make(this, 16458);
-			logger.info("§7Metrics loaded §dsuccessfully§7!");
-
+			logger.info("Metrics loaded successfully!");
 		}
 
 		if (VelocityRedis.REDIS.get(Boolean.class) && server.getPluginManager().isLoaded("redisbungee")) {
-
 			final RedisBungeeAPI redisBungeeAPI = RedisBungeeAPI.getRedisBungeeApi();
-
 			server.getEventManager().register(this, new RedisListener(this));
-
 			redisBungeeAPI.registerPubSubChannels("CleanPing-Request");
 			redisBungeeAPI.registerPubSubChannels("CleanPing-Response");
-
-			logger.info("§7Hooked into RedisBungee §dsuccessfully§7!");
-
+			logger.info("Hooked into RedisBungee successfully!");
 		}
 
 		if (VelocityConfig.UPDATE_CHECK.get(Boolean.class)) {
@@ -169,16 +164,14 @@ public class CleanPing {
 			});
 		}
 
-		logger.info("§7Plugin §dsuccessfully §7loaded!");
+		logger.info("Plugin successfully loaded!");
 	}
 
 	@Subscribe
 	public void onProxyShutdown(ProxyShutdownEvent event) {
-
-		logger.info("§7Clearing §dinstances§7...");
+		logger.info("Clearing instances...");
 		instance = null;
-
-		logger.info("§7Plugin successfully §ddisabled§7!");
+		logger.info("Plugin successfully disabled!");
 	}
 
 	private void loadFiles() {
@@ -208,7 +201,7 @@ public class CleanPing {
 	private void updateConfig() {
 		if (container.getDescription().getVersion().isPresent() && (!container.getDescription().getVersion().get().equals(VelocityVersion.VERSION.get(String.class)))) {
 
-			logger.info("§7Creating new §dconfigurations§7...");
+			logger.info(Component.text("Creating new configurations...").color(NamedTextColor.LIGHT_PURPLE).content());
 			YamlUpdater.create(new File(path + "/config.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/config.yml"))
 					.backup(true)
 					.update();
