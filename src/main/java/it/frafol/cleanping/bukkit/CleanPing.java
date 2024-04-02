@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -82,17 +81,7 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 				"  \\___|_\\___\\__,_|_||_| |_| |_|_||_\\__, |\n" +
 				"                                   |___/ \n");
 
-		getLogger().info("Server version: " + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + ".");
-		if (getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_6_R")
-				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_5_R")
-				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_4_R")
-				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_3_R")) {
-
-			getLogger().severe("Support for your version was declined.");
-			getInstance().getPluginLoader().disablePlugin(this);
-			return;
-		}
-
+		getLogger().info("Server version: " + getServer().getBukkitVersion());
 		getLogger().info("Loading configuration...");
 		configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
 		messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
