@@ -224,6 +224,7 @@ public final class PingCommand  {
                                                         .replace("%arg1%", argument)
                                                         .replace("%arg2%", argument2)
                                                         .replace("%ping%", Long.toString(difference))
+                                                        .replace("%difference%", Long.toString(difference))
                                                 ));
 
                                     } else {
