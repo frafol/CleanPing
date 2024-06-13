@@ -6,6 +6,7 @@ import it.frafol.cleanping.bukkit.commands.ReloadCommand;
 import it.frafol.cleanping.bukkit.commands.utils.TabComplete;
 import it.frafol.cleanping.bukkit.enums.SpigotConfig;
 import it.frafol.cleanping.bukkit.enums.SpigotVersion;
+import it.frafol.cleanping.bukkit.hooks.PlaceholderHook;
 import it.frafol.cleanping.bukkit.objects.TextFile;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -104,7 +105,6 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 			configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
 			messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
 			versionTextFile = new TextFile(getDataFolder().toPath(), "version.yml");
-
 		}
 
 		if (!hasGetPingMethod()) {
@@ -159,19 +159,24 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 			});
 		}
 
+		if (isPAPI()) {
+			new PlaceholderHook(this).register();
+			getLogger().info("PlaceholderAPI found, placeholders enabled.");
+		}
+
 		getLogger().info("Plugin successfully loaded!");
 	}
 
 	public YamlFile getConfigTextFile() {
-		return getInstance().configTextFile.getConfig();
+		return configTextFile.getConfig();
 	}
 
 	public YamlFile getMessagesTextFile() {
-		return getInstance().messagesTextFile.getConfig();
+		return messagesTextFile.getConfig();
 	}
 
 	public YamlFile getVersionTextFile() {
-		return getInstance().versionTextFile.getConfig();
+		return versionTextFile.getConfig();
 	}
 
 	public static boolean hasGetPingMethod() {
@@ -181,6 +186,10 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 		} catch (NoSuchMethodException e) {
 			return false;
 		}
+	}
+
+	private boolean isPAPI() {
+		return getServer().getPluginManager().getPlugin("PlaceholderAPI") != null;
 	}
 
 	@SneakyThrows
