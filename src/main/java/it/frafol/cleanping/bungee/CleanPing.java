@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.byteflux.libby.BungeeLibraryManager;
 import net.byteflux.libby.Library;
+import net.byteflux.libby.relocation.Relocation;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.simpleyaml.configuration.file.YamlFile;
 import ru.vyarus.yaml.updater.YamlUpdater;
@@ -44,15 +45,19 @@ public class CleanPing extends Plugin {
 		BungeeLibraryManager bungeeLibraryManager = new BungeeLibraryManager(this);
 
 		Library yaml;
+		Relocation yamlrelocation = new Relocation("yaml", "it{}frafol{}libs{}yaml");
 		yaml = Library.builder()
 				.groupId("me{}carleslc{}Simple-YAML")
 				.artifactId("Simple-Yaml")
+				.relocate(yamlrelocation)
 				.version("1.8.4")
 				.build();
 
+		Relocation updatereolocation = new Relocation("updater", "it{}frafol{}libs{}updater");
 		Library updater = Library.builder()
 				.groupId("ru{}vyarus")
 				.artifactId("yaml-config-updater")
+				.relocate(updatereolocation)
 				.version("1.4.2")
 				.build();
 
@@ -67,6 +72,7 @@ public class CleanPing extends Plugin {
 			yaml = Library.builder()
 					.groupId("me{}carleslc{}Simple-YAML")
 					.artifactId("Simple-Yaml")
+					.relocate(yamlrelocation)
 					.version("1.8.4")
 					.url("https://github.com/Carleslc/Simple-YAML/releases/download/1.8.4/Simple-Yaml-1.8.4.jar")
 					.build();

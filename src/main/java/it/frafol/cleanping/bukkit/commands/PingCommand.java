@@ -121,7 +121,7 @@ public class PingCommand implements CommandExecutor {
 			final long ping2 = Objects.requireNonNull(plugin.getServer().getPlayer(args[1])).getPing();
 			final long difference = getDifference(ping1, ping2);
 
-			source.sendMessage(Placeholder.translate(SpigotMessages.OTHERS_PING.get(String.class))
+			source.sendMessage(Placeholder.translate(SpigotMessages.PING_DIFFERENCE.get(String.class))
 					.replace("%prefix%", Placeholder.translate(SpigotMessages.PREFIX.get(String.class)))
 					.replace("%arg1%", (args[0]))
 					.replace("%arg2%", (args[1]))
