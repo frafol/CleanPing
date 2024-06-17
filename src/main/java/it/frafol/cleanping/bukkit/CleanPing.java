@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
+import net.byteflux.libby.relocation.Relocation;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -54,10 +55,21 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 		BukkitLibraryManager bukkitLibraryManager = new BukkitLibraryManager(this);
 
 		Library yaml;
+		Relocation yamlrelocation = new Relocation("yaml", "it{}frafol{}libs{}yaml");
 		yaml = Library.builder()
 				.groupId("me{}carleslc{}Simple-YAML")
 				.artifactId("Simple-Yaml")
+				.relocate(yamlrelocation)
 				.version("1.8.4")
+				.build();
+
+		Relocation updaterrelocation = new Relocation("updater", "it{}frafol{}libs{}updater");
+		Library updater = Library.builder()
+				.groupId("com{}tchristofferson")
+				.artifactId("ConfigUpdater")
+				.version("2.1-SNAPSHOT")
+				.relocate(updaterrelocation)
+				.url("https://github.com/frafol/Config-Updater/releases/download/compile/ConfigUpdater-2.1-SNAPSHOT.jar")
 				.build();
 
 		bukkitLibraryManager.addJitPack();
@@ -69,12 +81,14 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 			yaml = Library.builder()
 					.groupId("me{}carleslc{}Simple-YAML")
 					.artifactId("Simple-Yaml")
+					.relocate(yamlrelocation)
 					.version("1.8.4")
 					.url("https://github.com/Carleslc/Simple-YAML/releases/download/1.8.4/Simple-Yaml-1.8.4.jar")
 					.build();
 		}
 
 		bukkitLibraryManager.loadLibrary(yaml);
+		bukkitLibraryManager.loadLibrary(updater);
 
 		getLogger().info("\n   ___ _                 ___ _           \n" +
 				"  / __| |___ __ _ _ _   | _ (_)_ _  __ _ \n" +
