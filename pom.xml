@@ -70,7 +70,7 @@
         </repository>
         <repository>
             <id>AlessioDP</id>
-            <url>https://repo.alessiodp.com/releases/</url>
+            <url>https://repo.alessiodp.com/snapshots/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
