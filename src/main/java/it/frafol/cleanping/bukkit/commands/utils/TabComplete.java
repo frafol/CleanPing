@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -18,8 +19,18 @@ public class TabComplete implements TabCompleter {
         }
 
         return sender.getServer().getOnlinePlayers().stream()
-                .filter(player -> player.getName().toLowerCase().startsWith(args[0].toLowerCase()))
+                .filter(player ->
+                        !isVanished(player) && player.getName().toLowerCase().startsWith(args[0].toLowerCase()))
                 .map(Player::getName)
                 .collect(Collectors.toList());
+    }
+
+    private boolean isVanished(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
