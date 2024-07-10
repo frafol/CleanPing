@@ -13,12 +13,8 @@ import lombok.SneakyThrows;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.relocation.Relocation;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.simpleyaml.configuration.file.YamlFile;
 
 import java.io.File;
@@ -30,11 +26,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class CleanPing extends JavaPlugin implements TabExecutor {
+public class CleanPing extends JavaPlugin {
 
 	private TextFile configTextFile;
 	private TextFile messagesTextFile;
@@ -125,9 +119,7 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 
 			getLogger().info("Loading commands for legacy versions...");
 			Objects.requireNonNull(getCommand("ping")).setExecutor(new it.frafol.cleanping.bukkit.commands.legacy.PingCommand(this));
-			Objects.requireNonNull(getCommand("ping")).setTabCompleter(this);
 			Objects.requireNonNull(getCommand("cleanping")).setExecutor(new it.frafol.cleanping.bukkit.commands.legacy.PingCommand(this));
-			Objects.requireNonNull(getCommand("cleanping")).setTabCompleter(this);
 			Objects.requireNonNull(getCommand("pingreload")).setExecutor(new it.frafol.cleanping.bukkit.commands.legacy.ReloadCommand(this));
 			Objects.requireNonNull(getCommand("cleanpingreload")).setExecutor(new it.frafol.cleanping.bukkit.commands.legacy.ReloadCommand(this));
 
@@ -135,9 +127,7 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 
 			getLogger().info("Loading commands...");
 			Objects.requireNonNull(getCommand("ping")).setExecutor(new PingCommand(this));
-			Objects.requireNonNull(getCommand("ping")).setTabCompleter(this);
 			Objects.requireNonNull(getCommand("cleanping")).setExecutor(new PingCommand(this));
-			Objects.requireNonNull(getCommand("cleanping")).setTabCompleter(this);
 			Objects.requireNonNull(getCommand("pingreload")).setExecutor(new ReloadCommand(this));
 			Objects.requireNonNull(getCommand("cleanpingreload")).setExecutor(new ReloadCommand(this));
 
@@ -263,21 +253,5 @@ public class CleanPing extends JavaPlugin implements TabExecutor {
 		instance = null;
 
 		getLogger().info("Plugin successfully disabled!");
-	}
-
-	@Override
-	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-
-		if (args.length != 1) {
-			return null;
-		}
-
-		String partialName = args[0].toLowerCase();
-
-		return getServer().getOnlinePlayers().stream()
-				.map(Player::getName)
-				.filter(name -> name.toLowerCase().startsWith(partialName))
-				.collect(Collectors.toList());
-
 	}
 }

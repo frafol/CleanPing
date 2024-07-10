@@ -1,29 +1,36 @@
 package it.frafol.cleanping.bukkit.commands.utils;
 
-import it.frafol.cleanping.bukkit.CleanPing;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TabComplete implements TabCompleter {
 
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-
-        final List<String> list = new ArrayList<>();
-
-        if (command.getName().equalsIgnoreCase("ping")
-                || command.getName().equalsIgnoreCase("cleanping")) {
-
-            for (Player players : CleanPing.getInstance().getServer().getOnlinePlayers()) {
-                list.add(players.getName());
-            }
-
+        if (args.length != 1) {
+            return Collections.emptyList();
         }
-        return list;
+
+        return sender.getServer().getOnlinePlayers().stream()
+                .filter(player ->
+                        !isVanished(player) && player.getName().toLowerCase().startsWith(args[0].toLowerCase()))
+                .map(Player::getName)
+                .collect(Collectors.toList());
+    }
+
+    private boolean isVanished(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
