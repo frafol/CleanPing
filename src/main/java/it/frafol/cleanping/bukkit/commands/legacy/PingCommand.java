@@ -32,7 +32,7 @@ public class PingCommand implements CommandExecutor {
 			final Player player = (Player) source;
 			final long ping = plugin.getPing(player);
 
-			if (source.hasPermission(SpigotConfig.PING_PERMISSION.get(String.class))) {
+			if (source.isOp() || source.hasPermission(SpigotConfig.PING_PERMISSION.get(String.class))) {
 
 				if (!(SpigotConfig.DYNAMIC_PING.get(Boolean.class))) {
 					source.sendMessage(SpigotMessages.PING.color()

@@ -20,7 +20,7 @@ public class ReloadCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender source, @NotNull Command command, @NotNull String s, String[] args) {
 
-        if (!source.hasPermission(SpigotConfig.RELOAD_PERMISSION.get(String.class))) {
+        if (!source.isOp() && !source.hasPermission(SpigotConfig.RELOAD_PERMISSION.get(String.class))) {
             source.sendMessage(SpigotMessages.NO_PERMISSION.color()
                     .replace("%prefix%", SpigotMessages.PREFIX.color()));
             return false;

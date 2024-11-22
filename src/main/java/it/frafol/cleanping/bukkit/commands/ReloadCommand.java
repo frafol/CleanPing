@@ -21,7 +21,7 @@ public class ReloadCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender source, @NotNull Command command, @NotNull String s, String[] args) {
 
-        if (!source.hasPermission(SpigotConfig.RELOAD_PERMISSION.get(String.class))) {
+        if (!source.isOp() && !source.hasPermission(SpigotConfig.RELOAD_PERMISSION.get(String.class))) {
             source.sendMessage(Placeholder.translate(SpigotMessages.NO_PERMISSION.get(String.class))
                     .replace("%prefix%", Placeholder.translate(SpigotMessages.PREFIX.get(String.class))));
             return false;

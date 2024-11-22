@@ -35,7 +35,7 @@ public class PingCommand implements CommandExecutor {
 			final Player player = (Player) source;
 			final long ping = player.getPing();
 
-			if (source.hasPermission(SpigotConfig.PING_PERMISSION.get(String.class))) {
+			if (source.isOp() || source.hasPermission(SpigotConfig.PING_PERMISSION.get(String.class))) {
 
 				if (!(SpigotConfig.DYNAMIC_PING.get(Boolean.class))) {
 					source.sendMessage(Placeholder.translate(SpigotMessages.PING.get(String.class))
