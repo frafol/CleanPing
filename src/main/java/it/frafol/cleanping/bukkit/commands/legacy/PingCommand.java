@@ -52,7 +52,7 @@ public class PingCommand implements CommandExecutor {
 
 		} else if (args.length == 1) {
 
-			if (!source.hasPermission(SpigotConfig.PING_OTHERS_PERMISSION.get(String.class))) {
+			if (!source.isOp() && !source.hasPermission(SpigotConfig.PING_OTHERS_PERMISSION.get(String.class))) {
 				source.sendMessage(SpigotMessages.NO_PERMISSION.color()
 						.replace("%prefix%", SpigotMessages.PREFIX.color()));
 				return false;
@@ -88,7 +88,7 @@ public class PingCommand implements CommandExecutor {
 
 		} else if (args.length == 2) {
 
-			if (!source.hasPermission(SpigotConfig.DIFFERENCE_PING_PERMISSION.get(String.class))) {
+			if (!source.isOp() && !source.hasPermission(SpigotConfig.DIFFERENCE_PING_PERMISSION.get(String.class))) {
 				source.sendMessage(SpigotMessages.NO_PERMISSION.color()
 						.replace("%prefix%", Placeholder.translate(SpigotMessages.PREFIX.get(String.class))));
 				return false;
