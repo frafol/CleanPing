@@ -7,6 +7,7 @@ Clean Ping is a basic /ping plugin, compatible with BungeeCord, Spigot and Veloc
 ## Features
 ```
 » You can see your ping, or that of other players.
+» You can see the difference between two pings;
 » Extensive compatibility;
 » Command to reload the plugin;
 » The plugin and translations are configurable.
@@ -14,17 +15,16 @@ Clean Ping is a basic /ping plugin, compatible with BungeeCord, Spigot and Veloc
 
 ## Velocity, BungeeCord and Spigot compatibility is here.
 ```
-» BungeeCord 1.7-1.21 & forks
-» Velocity 3.1.2/3.2.0/3.3.0 & forks
-» Spigot 1.7.10-1.21 & forks
-
-(Aegis should work but you won't get support as it is a crappy proxy and can cause several problems)
+» BungeeCord 1.7-1.21.X & forks
+» Velocity 3.2.0/3.3.0/3.4.0 & forks
+» Spigot 1.7.10-1.21.X & forks
 ```
 
 ## Commands
 ```
 » /ping • Send your ping;
 » /ping (player) • Send the ping of the player of your choice;
+» /ping (player1) (player2) • Send the ping difference between two players;
 » /pingreload • Reloads the plugin.
 ```
 
