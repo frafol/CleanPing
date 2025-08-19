@@ -22,6 +22,17 @@ settings:
   auto_update: true
   stats: true
 
+monitor:
+
+  # This will periodically check at defined intervals if the player is lagging.
+  # If their ping is repeatedly high, they will receive a warning message with possible solutions.
+  # You can decide the threshold for flags and the interval between checks.
+  # If the server goes to <19.5 TPS, check won't work (only on Spigot).
+  enabled: false
+  max_ping: 100 # Ping for trigger the check.
+  max_flags: 3 # The player will receive a message only if he flags x times.
+  flag_delay: 30 # In seconds, the delay of the player lag check. (We do not recommend lower values than 30)
+
 dynamic:
 
   medium_ms: 120

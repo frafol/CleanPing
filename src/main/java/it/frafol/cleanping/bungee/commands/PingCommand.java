@@ -29,7 +29,7 @@ public class PingCommand extends Command implements TabExecutor {
 		if (args.length == 0) {
 
 			if (!(source instanceof ProxiedPlayer)) {
-				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.ONLY_PLAYERS.color()
+				source.sendMessage(TextComponent.fromLegacy(BungeeMessages.ONLY_PLAYERS.color()
 						.replace("%prefix%", BungeeMessages.PREFIX.color())));
 				return;
 			}
@@ -40,18 +40,18 @@ public class PingCommand extends Command implements TabExecutor {
 			if (source.hasPermission(BungeeConfig.PING_PERMISSION.get(String.class))) {
 
 				if (!(BungeeConfig.DYNAMIC_PING.get(Boolean.class))) {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
+					source.sendMessage(TextComponent.fromLegacy(BungeeMessages.PING.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
 							.replace("%ping%", String.valueOf(ping))));
 					return;
 				}
 
-				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING.color()
+				source.sendMessage(TextComponent.fromLegacy(BungeeMessages.PING.color()
 						.replace("%prefix%", BungeeMessages.PREFIX.color())
 						.replace("%ping%", colorBasedOnPing(ping) + ping)));
 
 			} else {
-				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NO_PERMISSION.color()
+				source.sendMessage(TextComponent.fromLegacy(BungeeMessages.NO_PERMISSION.color()
 						.replace("%prefix%", BungeeMessages.PREFIX.color())));
 			}
 
@@ -61,20 +61,20 @@ public class PingCommand extends Command implements TabExecutor {
 					|| ProxyServer.getInstance().getPlayer(args[0]) != null) {
 
 				if (!source.hasPermission(BungeeConfig.PING_OTHERS_PERMISSION.get(String.class))) {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NO_PERMISSION.color()
+					source.sendMessage(TextComponent.fromLegacy(BungeeMessages.NO_PERMISSION.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())));
 					return;
 				}
 
 				if (ProxyServer.getInstance().getPlayer(args[0]) == null) {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NOT_ONLINE.color()
+					source.sendMessage(TextComponent.fromLegacy(BungeeMessages.NOT_ONLINE.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
 							.replace("%user%", (args[0]))));
 					return;
 				}
 
 				if (!(BungeeConfig.OTHERS_PING_OPTION.get(Boolean.class))) {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.USAGE.color()
+					source.sendMessage(TextComponent.fromLegacy(BungeeMessages.USAGE.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())));
 					return;
 				}
@@ -82,14 +82,14 @@ public class PingCommand extends Command implements TabExecutor {
 				final long ping = ProxyServer.getInstance().getPlayer(args[0]).getPing();
 
 				if (!(BungeeConfig.DYNAMIC_PING.get(Boolean.class))) {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
+					source.sendMessage(TextComponent.fromLegacy(BungeeMessages.OTHERS_PING.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
 							.replace("%user%", (args[0]))
 							.replace("%ping%", String.valueOf(ping))));
 					return;
 				}
 
-				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
+				source.sendMessage(TextComponent.fromLegacy(BungeeMessages.OTHERS_PING.color()
 						.replace("%prefix%", BungeeMessages.PREFIX.color())
 						.replace("%user%", (args[0]))
 						.replace("%ping%", colorBasedOnPing(ping) + ping)));
@@ -97,7 +97,7 @@ public class PingCommand extends Command implements TabExecutor {
 			} else {
 
 				if (!source.hasPermission(BungeeConfig.PING_OTHERS_PERMISSION.get(String.class))) {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NO_PERMISSION.color()
+					source.sendMessage(TextComponent.fromLegacy(BungeeMessages.NO_PERMISSION.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())));
 					return;
 				}
@@ -112,7 +112,7 @@ public class PingCommand extends Command implements TabExecutor {
 				final UUID uuid = redisBungeeAPI.getUuidFromName(target);
 
 				if (!redisBungeeAPI.isPlayerOnline(uuid)) {
-					source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NOT_ONLINE.color()
+					source.sendMessage(TextComponent.fromLegacy(BungeeMessages.NOT_ONLINE.color()
 							.replace("%prefix%", BungeeMessages.PREFIX.color())
 							.replace("%user%", (args[0]))));
 					return;
@@ -123,34 +123,34 @@ public class PingCommand extends Command implements TabExecutor {
 				}
 
 				final ProxiedPlayer player = (ProxiedPlayer) source;
-				final String send_message = target + ";" + uuid + ";" + redisBungeeAPI.getProxy(uuid) + ";" + player.getUniqueId();
+				final String send_message = target + ";" + uuid + ";" + redisBungeeAPI.getProxy(uuid) + ";" + player.getUniqueId() + ";false";
 				redisBungeeAPI.sendChannelMessage("CleanPing-Request", send_message);
 			}
 
 		} else if (args.length == 2) {
 
 			if (!source.hasPermission(BungeeConfig.DIFFERENCE_PING_PERMISSION.get(String.class))) {
-				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NO_PERMISSION.color()
+				source.sendMessage(TextComponent.fromLegacy(BungeeMessages.NO_PERMISSION.color()
 						.replace("%prefix%", BungeeMessages.PREFIX.color())));
 				return;
 			}
 
 			if (ProxyServer.getInstance().getPlayer(args[0]) == null) {
-				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NOT_ONLINE.color()
+				source.sendMessage(TextComponent.fromLegacy(BungeeMessages.NOT_ONLINE.color()
 						.replace("%prefix%", BungeeMessages.PREFIX.color())
 						.replace("%user%", (args[0]))));
 				return;
 			}
 
 			if (ProxyServer.getInstance().getPlayer(args[1]) == null) {
-				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.NOT_ONLINE.color()
+				source.sendMessage(TextComponent.fromLegacy(BungeeMessages.NOT_ONLINE.color()
 						.replace("%prefix%", BungeeMessages.PREFIX.color())
 						.replace("%user%", (args[0]))));
 				return;
 			}
 
 			if (!(BungeeConfig.DIFFERENCE_PING_OPTION.get(Boolean.class))) {
-				source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.USAGE.color()
+				source.sendMessage(TextComponent.fromLegacy(BungeeMessages.USAGE.color()
 						.replace("%prefix%", BungeeMessages.PREFIX.color())));
 				return;
 			}
@@ -158,13 +158,13 @@ public class PingCommand extends Command implements TabExecutor {
 			final long ping1 = ProxyServer.getInstance().getPlayer(args[0]).getPing();
 			final long ping2 = ProxyServer.getInstance().getPlayer(args[1]).getPing();
 
-			source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.PING_DIFFERENCE.color()
+			source.sendMessage(TextComponent.fromLegacy(BungeeMessages.PING_DIFFERENCE.color()
 					.replace("%prefix%", BungeeMessages.PREFIX.color())
 					.replace("%arg1%", (args[0]))
 					.replace("%arg2%", (args[1]))
 					.replace("%difference%", getDifference(ping1, ping2).toString())));
 		} else {
-			source.sendMessage(TextComponent.fromLegacyText(BungeeMessages.USAGE.color()
+			source.sendMessage(TextComponent.fromLegacy(BungeeMessages.USAGE.color()
 					.replace("%prefix%", BungeeMessages.PREFIX.color())));
 		}
 

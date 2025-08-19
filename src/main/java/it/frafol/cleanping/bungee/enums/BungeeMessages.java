@@ -22,6 +22,8 @@ public enum BungeeMessages {
     OTHERS_PING("messages.others_ping"),
     PING_DIFFERENCE("messages.difference_ping"),
 
+    LAGGING("messages.lagging"),
+
     RELOADED("messages.reloaded");
 
     private final String path;

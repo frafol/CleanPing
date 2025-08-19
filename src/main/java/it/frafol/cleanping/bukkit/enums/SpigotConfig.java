@@ -20,6 +20,11 @@ public enum SpigotConfig {
     MEDIUM_MS("dynamic.medium_ms"),
     HIGH_MS("dynamic.high_ms"),
 
+    MONITOR("monitor.enabled"),
+    FLAG_DELAY("monitor.flag_delay"),
+    MAX_PING("monitor.max_ping"),
+    MAX_FLAGS("monitor.max_flags"),
+
     OTHERS_PING_OPTION("settings.others_ping_enabled"),
     DIFFERENCE_PING_OPTION("settings.difference_ping_enabled"),
 

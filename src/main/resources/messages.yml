@@ -22,4 +22,6 @@ messages:
   others_ping: "%prefix% &d%user%&7's latency: %ping% ms"
   difference_ping: "%prefix% &7The difference between latency of %arg1% and &d%arg2%&7 is: &d%difference% ms&7."
 
+  lagging: "%prefix% &7It seems like you are &dlagging&7, to improve your experience on the server try &dclosing any background apps&7! (Ping: &d%ping%&7)"
+
   reloaded: "%prefix% &7Configuration reloaded &dsuccessfully&7."

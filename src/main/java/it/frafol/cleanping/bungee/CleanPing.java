@@ -4,6 +4,7 @@ import com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI;
 import it.frafol.cleanping.bungee.commands.PingCommand;
 import it.frafol.cleanping.bungee.commands.ReloadCommand;
 import it.frafol.cleanping.bungee.enums.BungeeConfig;
+import it.frafol.cleanping.bungee.enums.BungeeMessages;
 import it.frafol.cleanping.bungee.enums.BungeeRedis;
 import it.frafol.cleanping.bungee.enums.BungeeVersion;
 import it.frafol.cleanping.bungee.hooks.RedisListener;
@@ -13,6 +14,8 @@ import lombok.SneakyThrows;
 import net.byteflux.libby.BungeeLibraryManager;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.relocation.Relocation;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.simpleyaml.configuration.file.YamlFile;
 import ru.vyarus.yaml.updater.YamlUpdater;
@@ -23,6 +26,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class CleanPing extends Plugin {
 
@@ -107,12 +116,13 @@ public class CleanPing extends Plugin {
 
 		}
 
+		if (BungeeConfig.MONITOR.get(Boolean.class)) {
+			monitorPing();
+		}
+
 		if (BungeeConfig.STATS.get(Boolean.class)) {
-
 			new Metrics(this, 16459);
-
 			getLogger().info("§7Metrics loaded §dsuccessfully§7!");
-
 		}
 
 		if (BungeeConfig.UPDATE_CHECK.get(Boolean.class)) {
@@ -155,10 +165,8 @@ public class CleanPing extends Plugin {
 
 	@Override
 	public void onDisable() {
-
 		getLogger().info("§7Clearing §dinstances§7...");
 		instance = null;
-
 		getLogger().info("§7Plugin successfully §ddisabled§7!");
 	}
 
@@ -167,6 +175,25 @@ public class CleanPing extends Plugin {
 		messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
 		redisTextFile = new TextFile(getDataFolder().toPath(), "redis.yml");
 		versionTextFile = new TextFile(getDataFolder().toPath(), "version.yml");
+	}
+
+	private void monitorPing() {
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+		Map<UUID, Integer> lagging = new HashMap<>();
+		scheduler.scheduleAtFixedRate(() -> {
+			for (ProxiedPlayer players : getProxy().getPlayers()) {
+				if (players.getPing() < BungeeConfig.MAX_PING.get(Integer.class)) continue;
+				if (lagging.containsKey(players.getUniqueId())) lagging.replace(players.getUniqueId(), lagging.get(players.getUniqueId()) + 1);
+				else lagging.put(players.getUniqueId(), 1);
+				if (lagging.get(players.getUniqueId()).equals(BungeeConfig.MAX_FLAGS.get(Integer.class))) sendLaggingMessage(players, players.getPing());
+			}
+		}, BungeeConfig.FLAG_DELAY.get(Integer.class), BungeeConfig.FLAG_DELAY.get(Integer.class), TimeUnit.SECONDS);
+	}
+
+	private void sendLaggingMessage(ProxiedPlayer player, Integer ping) {
+		player.sendMessage(TextComponent.fromLegacy(BungeeMessages.LAGGING.color()
+				.replace("%prefix%", BungeeMessages.PREFIX.color())
+				.replace("%ping%", String.valueOf(ping))));
 	}
 
 	public void autoUpdate() {

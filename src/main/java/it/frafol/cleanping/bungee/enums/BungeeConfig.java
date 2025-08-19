@@ -22,6 +22,11 @@ public enum BungeeConfig {
     OTHERS_PING_OPTION("settings.others_ping_enabled"),
     DIFFERENCE_PING_OPTION("settings.difference_ping_enabled"),
 
+    MONITOR("monitor.enabled"),
+    FLAG_DELAY("monitor.flag_delay"),
+    MAX_PING("monitor.max_ping"),
+    MAX_FLAGS("monitor.max_flags"),
+
     STATS("settings.stats"),
 
     DYNAMIC_PING("settings.dynamic_ping");

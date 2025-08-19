@@ -1,10 +1,13 @@
 package it.frafol.cleanping.bukkit;
 
+import com.github.Anon8281.universalScheduler.UniversalScheduler;
+import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import it.frafol.cleanping.bukkit.commands.PingCommand;
 import it.frafol.cleanping.bukkit.commands.ReloadCommand;
 import it.frafol.cleanping.bukkit.commands.utils.TabComplete;
 import it.frafol.cleanping.bukkit.enums.SpigotConfig;
+import it.frafol.cleanping.bukkit.enums.SpigotMessages;
 import it.frafol.cleanping.bukkit.enums.SpigotVersion;
 import it.frafol.cleanping.bukkit.hooks.PlaceholderHook;
 import it.frafol.cleanping.bukkit.objects.TextFile;
@@ -13,6 +16,7 @@ import lombok.SneakyThrows;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.relocation.Relocation;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.simpleyaml.configuration.file.YamlFile;
@@ -25,14 +29,15 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 public class CleanPing extends JavaPlugin {
 
 	private TextFile configTextFile;
 	private TextFile messagesTextFile;
 	private TextFile versionTextFile;
+
+	private static Field recentTps;
 
 	@Getter
 	public static CleanPing instance;
@@ -66,6 +71,14 @@ public class CleanPing extends JavaPlugin {
 				.url("https://github.com/frafol/Config-Updater/releases/download/compile/ConfigUpdater-2.1-SNAPSHOT.jar")
 				.build();
 
+		Relocation schedulerrelocation = new Relocation("scheduler", "it{}frafol{}libs{}scheduler");
+		Library scheduler = Library.builder()
+				.groupId("com{}github{}Anon8281")
+				.artifactId("UniversalScheduler")
+				.version("0.1.6")
+				.relocate(schedulerrelocation)
+				.build();
+
 		bukkitLibraryManager.addJitPack();
 
 		try {
@@ -83,6 +96,7 @@ public class CleanPing extends JavaPlugin {
 
 		bukkitLibraryManager.loadLibrary(yaml);
 		bukkitLibraryManager.loadLibrary(updater);
+		bukkitLibraryManager.loadLibrary(scheduler);
 
 		getLogger().info("\n   ___ _                 ___ _           \n" +
 				"  / __| |___ __ _ _ _   | _ (_)_ _  __ _ \n" +
@@ -135,6 +149,10 @@ public class CleanPing extends JavaPlugin {
 
 		Objects.requireNonNull(getCommand("ping")).setTabCompleter(new TabComplete());
 		Objects.requireNonNull(getCommand("cleanping")).setTabCompleter(new TabComplete());
+
+		if (SpigotConfig.MONITOR.get(Boolean.class)) {
+			monitorPing();
+		}
 
 		if (SpigotConfig.STATS.get(Boolean.class)) {
 			new Metrics(this, 16505);
@@ -198,6 +216,7 @@ public class CleanPing extends JavaPlugin {
 
 	@SneakyThrows
 	public int getPing(Player player) {
+		if (hasGetPingMethod()) return player.getPing();
 		String v = getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
 		try {
 			Class<?> CraftPlayerClass = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer");
@@ -211,6 +230,39 @@ public class CleanPing extends JavaPlugin {
 		}
 
 		return 0;
+	}
+
+	private static double getTPS() {
+		try {
+			Object server = Class.forName(
+					"org.bukkit.craftbukkit." +
+							Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] +
+							".CraftServer")
+					.getMethod("getServer").invoke(Bukkit.getServer());
+			double[] tps = (double[]) recentTps.get(server);
+			return tps[0];
+		} catch (Exception ignored) {
+			return 20.0;
+		}
+	}
+
+	private void monitorPing() {
+		TaskScheduler scheduler = UniversalScheduler.getScheduler(this);
+		Map<UUID, Integer> lagging = new HashMap<>();
+		scheduler.runTaskTimerAsynchronously(() -> {
+			for (Player players : getServer().getOnlinePlayers()) {
+				if (getPing(players) < SpigotConfig.MAX_PING.get(Integer.class) || getTPS() < 19.5) continue;
+				if (lagging.containsKey(players.getUniqueId())) lagging.replace(players.getUniqueId(), lagging.get(players.getUniqueId()) + 1);
+				else lagging.put(players.getUniqueId(), 1);
+				if (lagging.get(players.getUniqueId()).equals(SpigotConfig.MAX_FLAGS.get(Integer.class))) sendLaggingMessage(players, getPing(players));
+			}
+		}, SpigotConfig.FLAG_DELAY.get(Integer.class) * 20L, SpigotConfig.FLAG_DELAY.get(Integer.class) * 20L);
+	}
+
+	private void sendLaggingMessage(Player player, Integer ping) {
+		player.sendMessage(SpigotMessages.LAGGING.color()
+				.replace("%prefix%", SpigotMessages.PREFIX.color())
+				.replace("%ping%", String.valueOf(ping)));
 	}
 
 	public void autoUpdate() {

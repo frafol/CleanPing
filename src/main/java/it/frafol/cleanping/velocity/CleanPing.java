@@ -9,10 +9,12 @@ import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import it.frafol.cleanping.velocity.commands.PingCommand;
 import it.frafol.cleanping.velocity.commands.ReloadCommand;
 import it.frafol.cleanping.velocity.enums.VelocityConfig;
+import it.frafol.cleanping.velocity.enums.VelocityMessages;
 import it.frafol.cleanping.velocity.enums.VelocityRedis;
 import it.frafol.cleanping.velocity.enums.VelocityVersion;
 import it.frafol.cleanping.velocity.hooks.RedisListener;
@@ -22,6 +24,7 @@ import lombok.SneakyThrows;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.VelocityLibraryManager;
 import net.byteflux.libby.relocation.Relocation;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.slf4j.Logger;
 import ru.vyarus.yaml.updater.YamlUpdater;
 import ru.vyarus.yaml.updater.util.FileUtils;
@@ -32,6 +35,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @Plugin(
@@ -129,6 +136,10 @@ public class CleanPing {
 		PingCommand.register(server, this);
 		ReloadCommand.register(server, this);
 
+		if (VelocityConfig.MONITOR.get(Boolean.class)) {
+			monitorPing();
+		}
+
 		if (VelocityConfig.STATS.get(Boolean.class)) {
 			metricsFactory.make(this, 16458);
 			logger.info("Metrics loaded successfully!");
@@ -176,6 +187,24 @@ public class CleanPing {
 		logger.info("Clearing instances...");
 		instance = null;
 		logger.info("Plugin successfully disabled!");
+	}
+
+	private void monitorPing() {
+		Map<UUID, Integer> lagging = new HashMap<>();
+		getServer().getScheduler().buildTask(this, () -> {
+            for (Player players : getServer().getAllPlayers()) {
+                if (players.getPing() < VelocityConfig.MAX_PING.get(Integer.class)) continue;
+                if (lagging.containsKey(players.getUniqueId())) lagging.replace(players.getUniqueId(), lagging.get(players.getUniqueId()) + 1);
+                else lagging.put(players.getUniqueId(), 1);
+                if (lagging.get(players.getUniqueId()).equals(VelocityConfig.MAX_FLAGS.get(Integer.class))) sendLaggingMessage(players, (int) players.getPing());
+            }
+        }).delay(VelocityConfig.FLAG_DELAY.get(Integer.class), TimeUnit.SECONDS).repeat(VelocityConfig.FLAG_DELAY.get(Integer.class), TimeUnit.SECONDS).schedule();
+	}
+
+	private void sendLaggingMessage(Player player, Integer ping) {
+		player.sendMessage(LegacyComponentSerializer.legacy('§').deserialize(VelocityMessages.LAGGING.color()
+				.replace("%prefix%", VelocityMessages.PREFIX.color())
+				.replace("%ping%", String.valueOf(ping))));
 	}
 
 	private void loadFiles() {

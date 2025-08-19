@@ -70,14 +70,14 @@ public class RedisListener implements Listener {
             }
 
             if (!(BungeeConfig.DYNAMIC_PING.get(Boolean.class))) {
-                PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
+                PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacy(BungeeMessages.OTHERS_PING.color()
                         .replace("%prefix%", BungeeMessages.PREFIX.color())
                         .replace("%user%", player_name)
                         .replace("%ping%", String.valueOf(ping))));
                 return;
             }
 
-            PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacyText(BungeeMessages.OTHERS_PING.color()
+            PLUGIN.getProxy().getPlayer(source).sendMessage(TextComponent.fromLegacy(BungeeMessages.OTHERS_PING.color()
                     .replace("%prefix%", BungeeMessages.PREFIX.color())
                     .replace("%user%", player_name)
                     .replace("%ping%", colorBasedOnPing(ping) + ping)));
