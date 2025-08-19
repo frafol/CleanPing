@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.6.1",
+		version = "1.7.0",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
