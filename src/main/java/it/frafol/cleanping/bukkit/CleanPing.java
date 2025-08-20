@@ -10,6 +10,7 @@ import it.frafol.cleanping.bukkit.enums.SpigotConfig;
 import it.frafol.cleanping.bukkit.enums.SpigotMessages;
 import it.frafol.cleanping.bukkit.enums.SpigotVersion;
 import it.frafol.cleanping.bukkit.hooks.PlaceholderHook;
+import it.frafol.cleanping.bukkit.objects.Lag;
 import it.frafol.cleanping.bukkit.objects.TextFile;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -232,26 +233,13 @@ public class CleanPing extends JavaPlugin {
 		return 0;
 	}
 
-	private static double getTPS() {
-		try {
-			Object server = Class.forName(
-					"org.bukkit.craftbukkit." +
-							Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] +
-							".CraftServer")
-					.getMethod("getServer").invoke(Bukkit.getServer());
-			double[] tps = (double[]) recentTps.get(server);
-			return tps[0];
-		} catch (Exception ignored) {
-			return 20.0;
-		}
-	}
-
 	private void monitorPing() {
 		TaskScheduler scheduler = UniversalScheduler.getScheduler(this);
+		scheduler.runTaskTimer(new Lag(), 100L, 1L);
 		Map<UUID, Integer> lagging = new HashMap<>();
 		scheduler.runTaskTimerAsynchronously(() -> {
 			for (Player players : getServer().getOnlinePlayers()) {
-				if (getPing(players) < SpigotConfig.MAX_PING.get(Integer.class) || getTPS() < 19.5) continue;
+				if (getPing(players) < SpigotConfig.MAX_PING.get(Integer.class) || Lag.getTPS() < 19.5) continue;
 				if (lagging.containsKey(players.getUniqueId())) lagging.replace(players.getUniqueId(), lagging.get(players.getUniqueId()) + 1);
 				else lagging.put(players.getUniqueId(), 1);
 				if (lagging.get(players.getUniqueId()).equals(SpigotConfig.MAX_FLAGS.get(Integer.class))) sendLaggingMessage(players, getPing(players));
