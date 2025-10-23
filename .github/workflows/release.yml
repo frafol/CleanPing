@@ -20,12 +20,12 @@ jobs:
           java-version: '21'
 
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean install -B -U
 
-      - name: Find JAR file
+      - name: Find JAR file in universal
         id: find_jar
         run: |
-          JAR_FILE=$(find target -maxdepth 1 -name "*.jar" ! -name "original*.jar" | head -n 1)
+          JAR_FILE=$(find universal/target -maxdepth 1 -name "*.jar" ! -name "original*.jar" | head -n 1)
           echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
 
       - name: Upload JAR artifact
@@ -46,12 +46,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: my-plugin-jar
-          path: ./target
+          path: ./universal/target
 
       - name: Find JAR file in downloaded artifacts
         id: find_downloaded_jar
         run: |
-          JAR_FILE=$(find ./target -maxdepth 1 -name "*.jar" ! -name "original*.jar" | head -n 1)
+          JAR_FILE=$(find ./universal/target -maxdepth 1 -name "*.jar" ! -name "original*.jar" | head -n 1)
           echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
 
       - name: Remove older releases
@@ -85,5 +85,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ env.JAR_FILE }}
-          asset_name: CleanPing.jar
+          asset_name: CleanStaffChat.jar
           asset_content_type: application/java-archive
