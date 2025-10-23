@@ -1,1 +1,0 @@
-{"id":"cleanping","name":"CleanPing","version":"1.6.1","description":"Adds /ping command to check your and player's ping.","authors":["frafol"],"dependencies":[],"main":"it.frafol.cleanping.CleanPing"}

@@ -1,6 +1,0 @@
-name: CleanPing
-version: ${project.version}
-main: it.frafol.cleanping.bungee.CleanPing
-softDepends:
-  - RedisBungee
-author: frafol
