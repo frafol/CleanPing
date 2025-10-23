@@ -57,10 +57,10 @@ public class Placeholder {
 
     private static boolean supportsMiniMessage() {
         try {
-            Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
-            Class.forName("net.kyori.adventure.platform.bukkit.BukkitAudiences");
+            MiniMessage mm = MiniMessage.miniMessage();
+            mm.deserialize("supports");
             return true;
-        } catch (ClassNotFoundException e) {
+        } catch (Throwable e) {
             return false;
         }
     }
