@@ -29,6 +29,7 @@ public enum SpigotConfig {
     DIFFERENCE_PING_OPTION("settings.difference_ping_enabled"),
 
     STATS("settings.stats"),
+    MINIMESSAGE("settings.minimessage"),
 
     DYNAMIC_PING("settings.dynamic_ping");
 

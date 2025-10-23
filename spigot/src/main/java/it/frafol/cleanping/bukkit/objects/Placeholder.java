@@ -1,18 +1,31 @@
 package it.frafol.cleanping.bukkit.objects;
 
+import it.frafol.cleanping.bukkit.enums.SpigotConfig;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Getter
-public class Placeholder { private final String key;private final String value;
+public class Placeholder {
+
+    private final String key;
+    private final String value;
 
     public Placeholder(String key, String value) {
         this.key = "%" + key + "%";this.value = value;
     }
 
     public static String translate(String message) {
+
+        if (supportsMiniMessage() && SpigotConfig.MINIMESSAGE.get(Boolean.class)) {
+            final MiniMessage miniMessage = MiniMessage.miniMessage();
+            Component component = miniMessage.deserialize(message);
+            return LegacyComponentSerializer.legacySection().serialize(component);
+        }
 
         if (!containsHexColor(message)) {
             return message.replace("&", "§");
@@ -40,5 +53,15 @@ public class Placeholder { private final String key;private final String value;
     private static boolean containsHexColor(String message) {
         String hexColorPattern = "(?i)&#[a-f0-9]{6}";
         return message.matches(".*" + hexColorPattern + ".*");
+    }
+
+    private static boolean supportsMiniMessage() {
+        try {
+            Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
+            Class.forName("net.kyori.adventure.platform.bukkit.BukkitAudiences");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 }

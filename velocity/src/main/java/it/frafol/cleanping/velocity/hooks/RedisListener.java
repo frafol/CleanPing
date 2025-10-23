@@ -22,7 +22,7 @@ public class RedisListener {
         this.PLUGIN = plugin;
     }
 
-    @Subscribe(order = PostOrder.FIRST)
+    @Subscribe(priority = Short.MAX_VALUE)
     public void onRedisBungeeMessage(@NotNull PubSubMessageEvent event) {
 
         final RedisBungeeAPI redisBungeeAPI = RedisBungeeAPI.getRedisBungeeApi();
@@ -39,13 +39,13 @@ public class RedisListener {
                 return;
             }
 
-            if (!PLUGIN.getServer().getPlayer(player_uuid).isPresent()) {
+            if (PLUGIN.getServer().getPlayer(player_uuid).isEmpty()) {
                 return;
             }
 
             final Optional<Player> final_player = PLUGIN.getServer().getPlayer(player_uuid);
 
-            if (!final_player.isPresent()) {
+            if (final_player.isEmpty()) {
                 return;
             }
 
@@ -68,7 +68,7 @@ public class RedisListener {
                 return;
             }
 
-            if (!PLUGIN.getServer().getPlayer(source).isPresent()) {
+            if (PLUGIN.getServer().getPlayer(source).isEmpty()) {
                 return;
             }
 

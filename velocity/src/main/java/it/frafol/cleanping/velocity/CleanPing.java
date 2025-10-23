@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 @Plugin(
 		id = "cleanping",
 		name = "CleanPing",
-		version = "1.7.0",
+		version = "1.7.1",
 		dependencies = {@Dependency(id = "redisbungee", optional = true)},
 		description = "Adds /ping command to check your and player's ping.",
 		authors = { "frafol" })
@@ -235,13 +235,13 @@ public class CleanPing {
 		if (container.getDescription().getVersion().isPresent() && (!container.getDescription().getVersion().get().equals(VelocityVersion.VERSION.get(String.class)))) {
 
 			logger.info("Creating new configurations...");
-			YamlUpdater.create(new File(path + "/config.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/config.yml"))
+			YamlUpdater.create(new File(path + "/config.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/refs/heads/main/velocity/src/main/resources/config.yml"))
 					.backup(true)
 					.update();
-			YamlUpdater.create(new File(path + "/messages.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/messages.yml"))
+			YamlUpdater.create(new File(path + "/messages.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/refs/heads/main/velocity/src/main/resources/messages.yml"))
 					.backup(true)
 					.update();
-			YamlUpdater.create(new File(path + "/redis.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/redis.yml"))
+			YamlUpdater.create(new File(path + "/redis.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/refs/heads/main/velocity/src/main/resources/redis.yml"))
 					.backup(true)
 					.update();
 			versionTextFile.getConfig().set("version", container.getDescription().getVersion().get());

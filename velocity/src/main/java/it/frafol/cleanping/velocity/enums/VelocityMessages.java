@@ -1,6 +1,9 @@
 package it.frafol.cleanping.velocity.enums;
 
 import it.frafol.cleanping.velocity.CleanPing;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 public enum VelocityMessages {
@@ -33,6 +36,13 @@ public enum VelocityMessages {
     }
 
     public @NotNull String color() {
+
+        if (VelocityConfig.MINIMESSAGE.get(Boolean.class)) {
+            MiniMessage miniMessage = MiniMessage.miniMessage();
+            Component component = miniMessage.deserialize(get(String.class));
+            return LegacyComponentSerializer.legacySection().serialize(component);
+        }
+
         return get(String.class).replace("&", "§");
     }
 

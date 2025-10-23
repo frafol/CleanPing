@@ -233,13 +233,13 @@ public class CleanPing extends Plugin {
 	private void updateConfig() {
 		if (!getDescription().getVersion().equals(BungeeVersion.VERSION.get(String.class))) {
 			getLogger().info("§7Creating new §dconfigurations§7...");
-			YamlUpdater.create(new File(getDataFolder().toPath() + "/config.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/config.yml"))
+			YamlUpdater.create(new File(getDataFolder().toPath() + "/config.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/refs/heads/main/bungeecord/src/main/resources/config.yml"))
 					.backup(true)
 					.update();
-			YamlUpdater.create(new File(getDataFolder().toPath() + "/messages.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/messages.yml"))
+			YamlUpdater.create(new File(getDataFolder().toPath() + "/messages.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/refs/heads/main/bungeecord/src/main/resources/messages.yml"))
 					.backup(true)
 					.update();
-			YamlUpdater.create(new File(getDataFolder().toPath() + "/redis.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/main/src/main/resources/redis.yml"))
+			YamlUpdater.create(new File(getDataFolder().toPath() + "/redis.yml"), FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/refs/heads/main/bungeecord/src/main/resources/redis.yml"))
 					.backup(true)
 					.update();
 			versionTextFile.getConfig().set("version", getDescription().getVersion());

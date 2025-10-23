@@ -11,6 +11,7 @@ import it.frafol.cleanping.bukkit.enums.SpigotMessages;
 import it.frafol.cleanping.bukkit.enums.SpigotVersion;
 import it.frafol.cleanping.bukkit.hooks.PlaceholderHook;
 import it.frafol.cleanping.bukkit.objects.Lag;
+import it.frafol.cleanping.bukkit.objects.Placeholder;
 import it.frafol.cleanping.bukkit.objects.TextFile;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -248,9 +249,16 @@ public class CleanPing extends JavaPlugin {
 	}
 
 	private void sendLaggingMessage(Player player, Integer ping) {
-		player.sendMessage(SpigotMessages.LAGGING.color()
-				.replace("%prefix%", SpigotMessages.PREFIX.color())
-				.replace("%ping%", String.valueOf(ping)));
+		if (!hasGetPingMethod()) {
+            player.sendMessage(SpigotMessages.LAGGING.color()
+                    .replace("%prefix%", SpigotMessages.PREFIX.color())
+                    .replace("%ping%", String.valueOf(ping)));
+            return;
+        }
+
+        player.sendMessage(Placeholder.translate(SpigotMessages.LAGGING.get(String.class)
+                .replace("%prefix%", SpigotMessages.PREFIX.color())
+                .replace("%ping%", String.valueOf(ping))));
 	}
 
 	public void autoUpdate() {

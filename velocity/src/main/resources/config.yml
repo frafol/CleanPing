@@ -18,6 +18,9 @@ settings:
   # NOTE: This feature is not compatible with RedisBungee.
   difference_ping_enabled: true
 
+  # If you enable minimessage support, all default and legacy color codes won't work.
+  minimessage: false
+
   update_check: true
   auto_update: true
   stats: true

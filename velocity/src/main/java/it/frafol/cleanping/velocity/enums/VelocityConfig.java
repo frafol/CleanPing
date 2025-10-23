@@ -28,6 +28,7 @@ public enum VelocityConfig {
     MAX_FLAGS("monitor.max_flags"),
 
     STATS("settings.stats"),
+    MINIMESSAGE("settings.minimessage"),
 
     DYNAMIC_PING("settings.dynamic_ping");
 
