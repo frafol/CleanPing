@@ -1,0 +1,27 @@
+#   ___ _                 ___ _
+#  / __| |___ __ _ _ _   | _ (_)_ _  __ _
+# | (__| / -_) _` | ' \  |  _/ | ' \/ _` |
+# \___|_\___\__,_|_||_|  |_| |_|_||_\__, |
+#                                   |___/
+#
+# Messages. Made with ❤ by frafol.
+# For support: https://discord.com/invite/sTSwaGBCdC
+
+messages:
+
+  prefix: "&d&lPING &7»"
+
+  usage: "%prefix% &7Use: &d/ping [player]"
+
+  only_players: "%prefix% &7This command is only for &dplayers&7."
+
+  no_permission: "%prefix% &7You do not have the &dpermission &7to do this."
+  not_online: "%prefix% &7The user &d%user% &7is not &donline&7."
+
+  ping: "%prefix% &7Your latency is: &d%ping% ms"
+  others_ping: "%prefix% &d%user%&7's latency: %ping% ms"
+  difference_ping: "%prefix% &7The difference between latency of %arg1% and &d%arg2%&7 is: &d%difference% ms&7."
+
+  lagging: "%prefix% &7It seems like you are &dlagging&7, to improve your experience on the server try &dclosing any background apps&7! (Ping: &d%ping%&7)"
+
+  reloaded: "%prefix% &7Configuration reloaded &dsuccessfully&7."
