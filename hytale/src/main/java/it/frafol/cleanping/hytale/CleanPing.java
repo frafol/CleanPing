@@ -83,7 +83,7 @@ public class CleanPing extends JavaPlugin {
 			monitorPing();
 		}
 
-		HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> UpdateCheck.checkForUpdates(this, getVersionFromPom(), null), 0, 1, TimeUnit.HOURS);
+		HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> UpdateCheck.checkForUpdates(this, getVersionFromPom(), "cmke27xel000201s6butfvcb7"), 0, 1, TimeUnit.HOURS);
 		getLogger().at(Level.INFO).log("Plugin successfully loaded!");
 	}
 
