@@ -27,9 +27,6 @@ public enum HytaleConfig {
     OTHERS_PING_OPTION("settings.others_ping_enabled"),
     DIFFERENCE_PING_OPTION("settings.difference_ping_enabled"),
 
-    STATS("settings.stats"),
-    MINIMESSAGE("settings.minimessage"),
-
     DYNAMIC_PING("settings.dynamic_ping");
 
     private final String path;
