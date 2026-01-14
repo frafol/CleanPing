@@ -1,0 +1,53 @@
+#   ___ _                 ___ _
+#  / __| |___ __ _ _ _   | _ (_)_ _  __ _
+# | (__| / -_) _` | ' \  |  _/ | ' \/ _` |
+# \___|_\___\__,_|_||_|  |_| |_|_||_\__, |
+#                                   |___/
+#
+# Configuration file. Made with ❤ by frafol.
+# For support: https://discord.com/invite/sTSwaGBCdC
+
+settings:
+  # Toggle Dynamic Ping, change color when ping is high/low.
+  dynamic_ping: true
+
+  # Enable others ping command. (/ping {username})
+  others_ping_enabled: true
+
+  # Enable difference ping command. (/ping {username1} {username2})
+  # NOTE: This feature is not compatible with RedisBungee.
+  difference_ping_enabled: true
+
+  # If you enable minimessage support, all default and legacy color codes won't work.
+  minimessage: false
+
+  update_check: true
+  auto_update: true
+  stats: true
+
+monitor:
+
+  # This will periodically check at defined intervals if the player is lagging.
+  # If their ping is repeatedly high, they will receive a warning message with possible solutions.
+  # You can decide the threshold for flags and the interval between checks.
+  # If the server goes to <19.5 TPS, check won't work (only on Spigot).
+  enabled: false
+  max_ping: 100 # Ping for trigger the check.
+  max_flags: 3 # The player will receive a message only if he flags x times.
+  flag_delay: 30 # In seconds, the delay of the player lag check. (We do not recommend lower values than 30)
+
+dynamic:
+
+  medium_ms: 120
+  high_ms: 180
+
+  low_ms_color: "&a"
+  medium_ms_color: "&e"
+  high_ms_color: "&c"
+
+permissions:
+
+  ping: cleanping.ping
+  others_ping: cleanping.ping.others
+  difference_ping: cleanping.ping.difference
+  reload: cleanping.reload

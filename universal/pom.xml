@@ -7,7 +7,7 @@
     <parent>
         <groupId>it.frafol</groupId>
         <artifactId>cleanping</artifactId>
-        <version>1.7.1</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>universal</artifactId>
@@ -15,17 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>it.frafol</groupId>
-            <artifactId>spigot</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>it.frafol</groupId>
-            <artifactId>bungeecord</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>it.frafol</groupId>
-            <artifactId>velocity</artifactId>
+            <artifactId>hytale</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

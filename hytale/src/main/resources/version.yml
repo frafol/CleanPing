@@ -1,0 +1,2 @@
+# Please, don't change this file manually.
+version: '${project.version}'

@@ -1,0 +1,10 @@
+{
+  "Group": "FutureDevelopment",
+  "Name": "CleanPing",
+  "Version": "${project.version}",
+  "Main": "it.frafol.cleanping.hytale.CleanPing",
+  "ServerVersion": "*",
+  "Dependencies": {
+    "Hytale:I18nModule": "*"
+  }
+}
