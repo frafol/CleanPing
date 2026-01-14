@@ -110,8 +110,11 @@ public class CleanPing extends JavaPlugin {
 		return versionTextFile.getConfig();
 	}
 
-	public int getPing(PlayerRef player) {
-		return Math.toIntExact(player.getPacketHandler().getPingInfo(PongType.Direct).getPingMetricSet().getLastValue());
+	public long getPing(PlayerRef player) {
+		var pingInfo = player.getPacketHandler().getPingInfo(PongType.Direct);
+		var metric = pingInfo.getPingMetricSet();
+		double avgValue = metric.getLastValue();
+		return (long) (avgValue / 1000.0);
 	}
 
 	private void monitorPing() {
@@ -120,7 +123,7 @@ public class CleanPing extends JavaPlugin {
 		scheduler.scheduleAtFixedRate(() -> {
 			Universe universe = Universe.get();
 			for (var player : universe.getPlayers()) {
-				int ping = getPing(player);
+				int ping = Math.toIntExact(getPing(player));
 				if (ping < HytaleConfig.MAX_PING.get(Integer.class) || Lag.getTPS() < 19.5) continue;
 				lagging.merge(player.getUuid(), 1, Integer::sum);
 				if (lagging.get(player.getUuid()).equals(HytaleConfig.MAX_FLAGS.get(Integer.class))) {
@@ -136,7 +139,7 @@ public class CleanPing extends JavaPlugin {
 		String message = Placeholder.translate(HytaleMessages.LAGGING.get(String.class)
 				.replace("%prefix%", HytaleMessages.PREFIX.color())
 				.replace("%ping%", String.valueOf(ping)));
-		player.sendMessage(Message.raw(message));
+		player.sendMessage(Placeholder.format(message));
 	}
 
 	public String getVersionFromPom() {

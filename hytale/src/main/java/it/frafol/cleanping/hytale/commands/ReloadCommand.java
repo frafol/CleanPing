@@ -28,14 +28,14 @@ public class ReloadCommand extends AbstractCommand {
         CommandSender sender = context.sender();
 
         if (!PermissionsModule.get().hasPermission(sender.getUuid(), HytaleConfig.RELOAD_PERMISSION.get(String.class))) {
-            sender.sendMessage(Message.raw(Placeholder.translate(HytaleMessages.NO_PERMISSION.get(String.class))
+            sender.sendMessage(Placeholder.format(Placeholder.translate(HytaleMessages.NO_PERMISSION.get(String.class))
                     .replace("%prefix%", Placeholder.translate(HytaleMessages.PREFIX.get(String.class)))));
             return CompletableFuture.completedFuture(null);
         }
 
         TextFile.reloadAll();
 
-        sender.sendMessage(Message.raw(Placeholder.translate(HytaleMessages.RELOADED.get(String.class))
+        sender.sendMessage(Placeholder.format(Placeholder.translate(HytaleMessages.RELOADED.get(String.class))
                 .replace("%prefix%", Placeholder.translate(HytaleMessages.PREFIX.get(String.class)))));
 
         return CompletableFuture.completedFuture(null);

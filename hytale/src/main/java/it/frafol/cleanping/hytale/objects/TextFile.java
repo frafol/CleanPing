@@ -1,9 +1,7 @@
 package it.frafol.cleanping.hytale.objects;
 
-import lombok.SneakyThrows;
 import org.simpleyaml.configuration.file.YamlFile;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
