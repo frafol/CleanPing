@@ -15,6 +15,8 @@ import it.frafol.cleanping.hytale.enums.HytaleVersion;
 import it.frafol.cleanping.hytale.objects.Lag;
 import it.frafol.cleanping.hytale.objects.Placeholder;
 import it.frafol.cleanping.hytale.objects.TextFile;
+import net.byteflux.libby.HytaleLibraryManager;
+import net.byteflux.libby.Library;
 import org.simpleyaml.configuration.file.YamlFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -55,6 +57,7 @@ public class CleanPing extends JavaPlugin {
 		//getLogger().at(Level.INFO).log("Server version: " + Universe.get().getServer().getVersion());
 		getLogger().at(Level.INFO).log("Loading configuration...");
 
+		loadLibraries();
 		Path dataPath = getDataDirectory();
 		configTextFile = new TextFile(dataPath, "config.yml");
 		messagesTextFile = new TextFile(dataPath, "messages.yml");
@@ -115,6 +118,14 @@ public class CleanPing extends JavaPlugin {
 		var metric = pingInfo.getPingMetricSet();
 		double avgValue = metric.getLastValue();
 		return (long) (avgValue / 1000.0);
+	}
+
+	private void loadLibraries() {
+		HytaleLibraryManager hytaleLibraryManager = new HytaleLibraryManager(this);
+		Library yaml = Library.builder().groupId("me{}carleslc{}Simple-YAML").artifactId("Simple-Yaml").version("1.8.4").url("https://github.com/Carleslc/Simple-YAML/releases/download/1.8.4/Simple-Yaml-1.8.4.jar").build();
+		hytaleLibraryManager.addMavenCentral();
+		hytaleLibraryManager.addJitPack();
+		hytaleLibraryManager.loadLibrary(yaml);
 	}
 
 	private void monitorPing() {
