@@ -9,6 +9,7 @@ public enum HytaleConfig {
     PING_OTHERS_PERMISSION("permissions.others_ping"),
     DIFFERENCE_PING_PERMISSION("permissions.difference_ping"),
     RELOAD_PERMISSION("permissions.reload"),
+
     UPDATE_CHECK("settings.update_check"),
     AUTO_UPDATE("settings.auto_update"),
 

@@ -11,6 +11,7 @@ settings:
 
   # Notify if new updates are available.
   update_check: true
+  auto_update: false
 
   # Toggle Dynamic Ping, change color when ping is high/low.
   dynamic_ping: true

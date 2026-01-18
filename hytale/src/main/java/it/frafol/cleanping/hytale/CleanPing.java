@@ -2,7 +2,6 @@ package it.frafol.cleanping.hytale;
 
 import com.hypixel.hytale.protocol.packets.connection.PongType;
 import com.hypixel.hytale.server.core.HytaleServer;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -20,9 +19,12 @@ import net.byteflux.libby.Library;
 import org.simpleyaml.configuration.file.YamlFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import ru.vyarus.yaml.updater.YamlUpdater;
+import ru.vyarus.yaml.updater.util.FileUtils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -59,34 +61,37 @@ public class CleanPing extends JavaPlugin {
 
 		loadLibraries();
 		Path dataPath = getDataDirectory();
-		configTextFile = new TextFile(dataPath, "config.yml");
-		messagesTextFile = new TextFile(dataPath, "messages.yml");
-		versionTextFile = new TextFile(dataPath, "version.yml");
+		configTextFile = new TextFile(dataPath, "config.yml", "cleaping_config.yml");
+		messagesTextFile = new TextFile(dataPath, "messages.yml", "cleanping_messages.yml");
+		versionTextFile = new TextFile(dataPath, "version.yml", "cleanping_version.yml");
 
 		if (!getVersionFromPom().equals(HytaleVersion.VERSION.get(String.class))) {
 			getLogger().at(Level.INFO).log("Creating new configurations...");
-			// TODO Update configs
+			YamlUpdater.create(new File(getDataDirectory() + "/config.yml"),
+							FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/refs/heads/hytale/hytale/src/main/resources/cleanping_config.yml"))
+					.backup(true)
+					.update();
+			YamlUpdater.create(new File(getDataDirectory() + "/messages.yml"),
+							FileUtils.findFile("https://raw.githubusercontent.com/frafol/CleanPing/refs/heads/hytale/hytale/src/main/resources/cleanping_messages.yml"))
+					.backup(true)
+					.update();
 			versionTextFile.getConfig().set("version", getVersionFromPom());
             try {
                 versionTextFile.getConfig().save();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            configTextFile = new TextFile(dataPath, "config.yml");
-			messagesTextFile = new TextFile(dataPath, "messages.yml");
-			versionTextFile = new TextFile(dataPath, "version.yml");
+            configTextFile = new TextFile(dataPath, "config.yml", "cleaping_config.yml");
+			messagesTextFile = new TextFile(dataPath, "messages.yml", "cleanping_messages.yml");
+			versionTextFile = new TextFile(dataPath, "version.yml", "cleanping_version.yml");
 		}
 
 		getLogger().at(Level.INFO).log("Loading commands...");
-
 		getCommandRegistry().registerCommand(new PingCommand(this, "ping", "Check your ping or others' ping"));
 		getCommandRegistry().registerCommand(new ReloadCommand(this, "pingreload", "Reload the plugin configuration"));
 
-		if (Boolean.TRUE.equals(HytaleConfig.MONITOR.get(Boolean.class))) {
-			monitorPing();
-		}
-
-		HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> UpdateCheck.checkForUpdates(this, getVersionFromPom(), "cmke27xel000201s6butfvcb7"), 0, 1, TimeUnit.HOURS);
+		if (Boolean.TRUE.equals(HytaleConfig.MONITOR.get(Boolean.class))) monitorPing();
+		if (HytaleConfig.UPDATE_CHECK.get(Boolean.class)) HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> UpdateCheck.checkForUpdates(this, getVersionFromPom(), "cmke27xel000201s6butfvcb7"), 0, 1, TimeUnit.HOURS);
 		getLogger().at(Level.INFO).log("Plugin successfully loaded!");
 	}
 
