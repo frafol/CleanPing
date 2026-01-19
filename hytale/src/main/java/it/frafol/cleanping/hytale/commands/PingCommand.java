@@ -11,6 +11,7 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import it.frafol.cleanping.hytale.CleanPing;
 import it.frafol.cleanping.hytale.enums.HytaleConfig;
 import it.frafol.cleanping.hytale.enums.HytaleMessages;
+import it.frafol.cleanping.hytale.objects.PermissionsUtil;
 import it.frafol.cleanping.hytale.objects.Placeholder;
 
 import javax.annotation.Nonnull;
@@ -52,7 +53,7 @@ public class PingCommand extends AbstractCommand {
 			}
 			long ping = getPing(player);
 
-			if (PermissionsModule.get().hasPermission(sender.getUuid(), HytaleConfig.PING_PERMISSION.get(String.class))) {
+			if (PermissionsUtil.hasPermission(sender.getUuid(), HytaleConfig.PING_PERMISSION.get(String.class))) {
 				if (!HytaleConfig.DYNAMIC_PING.get(Boolean.class)) {
 					sender.sendMessage(Placeholder.format(Placeholder.translate(HytaleMessages.PING.get(String.class))
 							.replace("%prefix%", Placeholder.translate(HytaleMessages.PREFIX.get(String.class)))
@@ -69,7 +70,7 @@ public class PingCommand extends AbstractCommand {
 			}
 
 		} else if (args.length == 1) {
-			if (!PermissionsModule.get().hasPermission(sender.getUuid(), HytaleConfig.PING_OTHERS_PERMISSION.get(String.class))) {
+			if (!PermissionsUtil.hasPermission(sender.getUuid(), HytaleConfig.PING_OTHERS_PERMISSION.get(String.class))) {
 				sender.sendMessage(Placeholder.format(Placeholder.translate(HytaleMessages.NO_PERMISSION.get(String.class))
 						.replace("%prefix%", Placeholder.translate(HytaleMessages.PREFIX.get(String.class)))));
 				return CompletableFuture.completedFuture(null);
@@ -109,7 +110,7 @@ public class PingCommand extends AbstractCommand {
 					.replace("%user%", args[0])
 					.replace("%ping%", colorBasedOnPing(ping) + ping)));
 		} else if (args.length == 2) {
-			if (!PermissionsModule.get().hasPermission(sender.getUuid(), HytaleConfig.DIFFERENCE_PING_PERMISSION.get(String.class))) {
+			if (!PermissionsUtil.hasPermission(sender.getUuid(), HytaleConfig.DIFFERENCE_PING_PERMISSION.get(String.class))) {
 				sender.sendMessage(Placeholder.format(Placeholder.translate(HytaleMessages.NO_PERMISSION.get(String.class))
 						.replace("%prefix%", Placeholder.translate(HytaleMessages.PREFIX.get(String.class)))));
 				return CompletableFuture.completedFuture(null);

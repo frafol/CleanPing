@@ -8,6 +8,7 @@ import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 import it.frafol.cleanping.hytale.CleanPing;
 import it.frafol.cleanping.hytale.enums.HytaleConfig;
 import it.frafol.cleanping.hytale.enums.HytaleMessages;
+import it.frafol.cleanping.hytale.objects.PermissionsUtil;
 import it.frafol.cleanping.hytale.objects.Placeholder;
 import it.frafol.cleanping.hytale.objects.TextFile;
 
@@ -27,7 +28,7 @@ public class ReloadCommand extends AbstractCommand {
     protected CompletableFuture<Void> execute(@Nonnull CommandContext context) {
         CommandSender sender = context.sender();
 
-        if (!PermissionsModule.get().hasPermission(sender.getUuid(), HytaleConfig.RELOAD_PERMISSION.get(String.class))) {
+        if (!PermissionsUtil.hasPermission(sender.getUuid(), HytaleConfig.RELOAD_PERMISSION.get(String.class))) {
             sender.sendMessage(Placeholder.format(Placeholder.translate(HytaleMessages.NO_PERMISSION.get(String.class))
                     .replace("%prefix%", Placeholder.translate(HytaleMessages.PREFIX.get(String.class)))));
             return CompletableFuture.completedFuture(null);
