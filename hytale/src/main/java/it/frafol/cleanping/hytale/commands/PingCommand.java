@@ -25,6 +25,7 @@ public class PingCommand extends AbstractCommand {
 	public PingCommand(CleanPing plugin, String name, String description) {
 		super(name, description);
 		this.plugin = plugin;
+		this.addAliases("cleanping", "cping", "playerping");
 		this.setAllowsExtraArguments(true);
 	}
 

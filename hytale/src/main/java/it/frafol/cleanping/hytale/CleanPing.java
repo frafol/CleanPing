@@ -49,14 +49,14 @@ public class CleanPing extends JavaPlugin {
 	}
 
 	@Override
-	protected void setup() {
+	protected void start() {
 		getLogger().at(Level.INFO).log("\n   ___ _                 ___ _           \n" +
 				"  / __| |___ __ _ _ _   | _ (_)_ _  __ _ \n" +
 				" | (__| / -_) _` | ' \\  |  _/ | ' \\/ _` |\n" +
 				"  \\___|_\\___\\__,_|_||_| |_| |_|_||_\\__, |\n" +
 				"                                   |___/ \n");
 
-		//getLogger().at(Level.INFO).log("Server version: " + Universe.get().getServer().getVersion());
+		//getLogger().at(Level.INFO).log("Server version: " + HytaleServer.get());
 		getLogger().at(Level.INFO).log("Loading configuration...");
 
 		loadLibraries();

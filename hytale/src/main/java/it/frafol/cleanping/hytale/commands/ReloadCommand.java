@@ -21,6 +21,7 @@ public class ReloadCommand extends AbstractCommand {
 
     public ReloadCommand(CleanPing plugin, String name, String description) {
         super(name, description);
+        this.addAliases("cleanpingreload", "cpingreload", "playerpingreload");
         this.plugin = plugin;
     }
 
