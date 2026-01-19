@@ -13,6 +13,7 @@ import it.frafol.cleanping.hytale.objects.Placeholder;
 import it.frafol.cleanping.hytale.objects.TextFile;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public class ReloadCommand extends AbstractCommand {
@@ -22,6 +23,7 @@ public class ReloadCommand extends AbstractCommand {
     public ReloadCommand(CleanPing plugin, String name, String description) {
         super(name, description);
         this.addAliases("cleanpingreload", "cpingreload", "playerpingreload");
+        this.requirePermission(Objects.requireNonNull(HytaleConfig.RELOAD_PERMISSION.get(String.class)));
         this.plugin = plugin;
     }
 

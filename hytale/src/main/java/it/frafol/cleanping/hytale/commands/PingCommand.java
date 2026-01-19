@@ -15,6 +15,7 @@ import it.frafol.cleanping.hytale.objects.PermissionsUtil;
 import it.frafol.cleanping.hytale.objects.Placeholder;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.Arrays;
 
@@ -25,6 +26,7 @@ public class PingCommand extends AbstractCommand {
 	public PingCommand(CleanPing plugin, String name, String description) {
 		super(name, description);
 		this.plugin = plugin;
+		this.requirePermission(Objects.requireNonNull(HytaleConfig.PING_PERMISSION.get(String.class)));
 		this.addAliases("cleanping", "cping", "playerping");
 		this.setAllowsExtraArguments(true);
 	}
