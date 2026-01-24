@@ -11,6 +11,7 @@ import it.frafol.cleanping.hytale.commands.ReloadCommand;
 import it.frafol.cleanping.hytale.enums.HytaleConfig;
 import it.frafol.cleanping.hytale.enums.HytaleMessages;
 import it.frafol.cleanping.hytale.enums.HytaleVersion;
+import it.frafol.cleanping.hytale.hooks.HookInitializer;
 import it.frafol.cleanping.hytale.objects.Lag;
 import it.frafol.cleanping.hytale.objects.Placeholder;
 import it.frafol.cleanping.hytale.objects.TextFile;
@@ -92,6 +93,7 @@ public class CleanPing extends JavaPlugin {
 
 		if (Boolean.TRUE.equals(HytaleConfig.MONITOR.get(Boolean.class))) monitorPing();
 		if (HytaleConfig.UPDATE_CHECK.get(Boolean.class)) HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> UpdateCheck.checkForUpdates(this, getVersionFromPom(), "cmke27xel000201s6butfvcb7"), 0, 1, TimeUnit.HOURS);
+		HytaleServer.SCHEDULED_EXECUTOR.schedule(() -> HookInitializer.initializeHooks(this), 10, TimeUnit.SECONDS);
 		getLogger().at(Level.INFO).log("Plugin successfully loaded!");
 	}
 
