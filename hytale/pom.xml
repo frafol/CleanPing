@@ -7,7 +7,7 @@
     <parent>
         <groupId>it.frafol</groupId>
         <artifactId>cleanping</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -69,6 +69,10 @@
             <url>file://${project.basedir}/libs</url>
         </repository>
         <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.helpch.at/releases/</url>
+        </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -107,6 +111,12 @@
             <version>1.0.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/WiFlowPlaceholderAPI-1.0.0.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>at.helpch</groupId>
+            <artifactId>placeholderapi-hytale</artifactId>
+            <version>1.0.5</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.byteflux</groupId>

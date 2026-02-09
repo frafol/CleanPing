@@ -1,17 +1,17 @@
 package it.frafol.cleanping.hytale.hooks;
 
-import at.helpch.placeholderapi.expansion.PlaceholderExpansion;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
+import com.wiflow.placeholderapi.context.PlaceholderContext;
+import com.wiflow.placeholderapi.expansion.PlaceholderExpansion;
 import it.frafol.cleanping.hytale.CleanPing;
 import it.frafol.cleanping.hytale.enums.HytaleConfig;
-import org.jetbrains.annotations.NotNull;
 
-public class PlaceholderHook extends PlaceholderExpansion {
+public class WiPlaceholderHook extends PlaceholderExpansion {
 
     public final CleanPing plugin;
 
-    public PlaceholderHook(CleanPing plugin) {
+    public WiPlaceholderHook(CleanPing plugin) {
         this.plugin = plugin;
     }
 
@@ -31,36 +31,40 @@ public class PlaceholderHook extends PlaceholderExpansion {
     }
 
     @Override
-    public boolean persist() {
-        return true;
-    }
+    public String onPlaceholderRequest(PlaceholderContext placeholderContext, String placeholder) {
 
-    @Override
-    public String onPlaceholderRequest(PlayerRef player, @NotNull String placeholder) {
+        PlayerRef player = Universe.get().getPlayer(placeholderContext.getPlayerUuid());
         if (player == null) return null;
         if (placeholder.equalsIgnoreCase("ping")) {
             return plugin.getPing(player) + "";
         }
+
         if (placeholder.equalsIgnoreCase("coloured_ping")) {
             return colorBasedOnPing(plugin.getPing(player)) + plugin.getPing(player);
         }
+
         for (PlayerRef players : Universe.get().getPlayers()) {
+
             if (!player.isValid()) return null;
             if (placeholder.equalsIgnoreCase("ping_" + players.getUsername())) {
                 return plugin.getPing(players) + "";
             }
+
             if (placeholder.equalsIgnoreCase("coloured_ping_" + players.getUsername())) {
                 return colorBasedOnPing(plugin.getPing(players)) + plugin.getPing(players);
             }
+
             if (placeholder.equalsIgnoreCase("difference_" + players.getUsername())) {
                 return getDifference(plugin.getPing(players), plugin.getPing(player)) + "";
             }
+
             for (PlayerRef players2 : Universe.get().getPlayers()) {
                 if (!players.isValid()) return null;
                 if (placeholder.equalsIgnoreCase("difference_" + players.getUsername() + "_" + players2.getUsername())) {
                     return getDifference(plugin.getPing(players), plugin.getPing(players2)) + "";
                 }
             }
+
             return null;
         }
         return null;

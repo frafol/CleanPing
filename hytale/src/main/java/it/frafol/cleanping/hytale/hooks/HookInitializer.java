@@ -10,14 +10,21 @@ import it.frafol.cleanping.hytale.CleanPing;
 public class HookInitializer {
 
     public static void initializeHooks(CleanPing plugin) {
-        if (isPlaceholderAPI()) {
-            PlaceholderExpansion expansion = new PlaceholderHook(plugin);
+        if (isWiPlaceholderAPI()) {
+            PlaceholderExpansion expansion = new WiPlaceholderHook(plugin);
             WiFlowPlaceholderAPI.registerExpansion(expansion);
+        }
+        if (isPlaceholderAPI()) {
+            new PlaceholderHook(plugin).register();
         }
     }
 
-    public static boolean isPlaceholderAPI() {
+    public static boolean isWiPlaceholderAPI() {
         return HytaleServer.get().getPluginManager().hasPlugin(PluginIdentifier.fromString("com.wiflow:WiFlowPlaceholderAPI"), SemverRange.fromString("*"))
                 && WiFlowPlaceholderAPI.isInitialized();
+    }
+
+    public static boolean isPlaceholderAPI() {
+        return HytaleServer.get().getPluginManager().hasPlugin(PluginIdentifier.fromString("HelpChat:PlaceholderAPI"), SemverRange.fromString("*"));
     }
 }
