@@ -1,11 +1,10 @@
 package it.frafol.cleanping.hytale.commands;
 
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.CommandSender;
+import com.hypixel.hytale.server.core.console.ConsoleSender;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import it.frafol.cleanping.hytale.CleanPing;
@@ -73,7 +72,7 @@ public class PingCommand extends AbstractCommand {
 			}
 
 		} else if (args.length == 1) {
-			if (!PermissionsUtil.hasPermission(sender.getUuid(), HytaleConfig.PING_OTHERS_PERMISSION.get(String.class))) {
+			if (!PermissionsUtil.hasPermission(sender.getUuid(), HytaleConfig.PING_OTHERS_PERMISSION.get(String.class)) && !(sender instanceof ConsoleSender)) {
 				sender.sendMessage(Placeholder.format(Placeholder.translate(HytaleMessages.NO_PERMISSION.get(String.class))
 						.replace("%prefix%", Placeholder.translate(HytaleMessages.PREFIX.get(String.class)))));
 				return CompletableFuture.completedFuture(null);
@@ -113,7 +112,7 @@ public class PingCommand extends AbstractCommand {
 					.replace("%user%", args[0])
 					.replace("%ping%", colorBasedOnPing(ping) + ping)));
 		} else if (args.length == 2) {
-			if (!PermissionsUtil.hasPermission(sender.getUuid(), HytaleConfig.DIFFERENCE_PING_PERMISSION.get(String.class))) {
+			if (!PermissionsUtil.hasPermission(sender.getUuid(), HytaleConfig.PING_OTHERS_PERMISSION.get(String.class)) && !(sender instanceof ConsoleSender)) {
 				sender.sendMessage(Placeholder.format(Placeholder.translate(HytaleMessages.NO_PERMISSION.get(String.class))
 						.replace("%prefix%", Placeholder.translate(HytaleMessages.PREFIX.get(String.class)))));
 				return CompletableFuture.completedFuture(null);
