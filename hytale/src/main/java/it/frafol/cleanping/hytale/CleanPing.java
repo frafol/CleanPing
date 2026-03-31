@@ -57,9 +57,7 @@ public class CleanPing extends JavaPlugin {
 				"  \\___|_\\___\\__,_|_||_| |_| |_|_||_\\__, |\n" +
 				"                                   |___/ \n");
 
-		//getLogger().at(Level.INFO).log("Server version: " + HytaleServer.get());
 		getLogger().at(Level.INFO).log("Loading configuration...");
-
 		loadLibraries();
 		Path dataPath = getDataDirectory();
 		configTextFile = new TextFile(dataPath, "config.yml", "cleaping_config.yml");
@@ -94,6 +92,7 @@ public class CleanPing extends JavaPlugin {
 		if (Boolean.TRUE.equals(HytaleConfig.MONITOR.get(Boolean.class))) monitorPing();
 		if (HytaleConfig.UPDATE_CHECK.get(Boolean.class)) HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> UpdateCheck.checkForUpdates(this, getVersionFromPom(), "cmke27xel000201s6butfvcb7"), 0, 1, TimeUnit.HOURS);
 		HytaleServer.SCHEDULED_EXECUTOR.schedule(() -> HookInitializer.initializeHooks(this), 10, TimeUnit.SECONDS);
+		new Metrics(this, 30508);
 		getLogger().at(Level.INFO).log("Plugin successfully loaded!");
 	}
 
