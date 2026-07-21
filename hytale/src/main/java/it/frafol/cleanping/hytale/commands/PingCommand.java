@@ -50,7 +50,7 @@ public class PingCommand extends AbstractCommand {
 			if (player == null) {
 				sender.sendMessage(Placeholder.format(Placeholder.translate(HytaleMessages.NOT_ONLINE.get(String.class))
 						.replace("%prefix%", Placeholder.translate(HytaleMessages.PREFIX.get(String.class)))
-						.replace("%user%", sender.getDisplayName())));
+						.replace("%user%", sender.getUsername())));
 				return CompletableFuture.completedFuture(null);
 			}
 			long ping = getPing(player);
