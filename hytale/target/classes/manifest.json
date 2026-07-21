@@ -1,0 +1,7 @@
+{
+  "Group": "FutureDevelopment",
+  "Name": "CleanPing",
+  "Version": "1.2.2",
+  "Main": "it.frafol.cleanping.hytale.CleanPing",
+  "ServerVersion": "*"
+}
